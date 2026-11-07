@@ -10,6 +10,7 @@ const num=s=>{
  else if((v.match(/\./g)||[]).length>1)v=v.replace(/\./g,'');
  return Number(v);
 };
+const localTimeHHMM=()=>{const d=new Date();return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;};
 const localDateISO=()=>{
  const d=new Date();
  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
