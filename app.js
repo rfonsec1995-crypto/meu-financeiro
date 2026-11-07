@@ -29,11 +29,11 @@ const initialItems=[
  {id:'seed-7',descricao:'Energético',valor:17.50,categoria:'Alimentação',conta:'Débito',tipo:'Despesa',data:'2026-11-03'},
  {id:'seed-8',descricao:'Açaí',valor:55.70,categoria:'Alimentação',conta:'Crédito',tipo:'Despesa',data:'2026-11-02'}
 ];
-let state=loadState(),type='Despesa',account='Débito',cat='Alimentação',filter='Todos',monthFilter='Todos',dayFilter='Todos',selected='Alimentação';
+let state=loadState(),type='Despesa',account='Débito',cat='Alimentação',filter='Todos',monthFilter='Todos',dayFilter='Todos',selected='Alimentação',quickSelected=null;
 function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const s=JSON.parse(raw);if(s&&s.bal&&Array.isArray(s.items))return s;}}catch(e){}return {bal:{debito:1610.38,credito:201.66},items:initialItems};}
 function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));$('storageStatus').textContent='Salvo neste iPhone';}catch(e){$('storageStatus').textContent='Não foi possível salvar neste aparelho: '+e.message;}}
-function renderCats(){$('categories').innerHTML=cats.map(([n,e])=>`<button type="button" data-cat="${n}" class="${cat===n?'on':''}">${e}<br>${n}</button>`).join('');document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{cat=b.dataset.cat;renderCats();});}
-function renderQuick(){$('quick').innerHTML=quick.map(n=>`<button type="button" data-q="${n}">R$ ${n}</button>`).join('');document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{$('amount').value=String(b.dataset.q);$('amount').blur();$('formmsg').textContent='Valor de '+fmt(Number(b.dataset.q))+' selecionado.';});}
+function renderCats(){$('categories').dataset.liquidReady='0';$('categories').innerHTML=cats.map(([n,e])=>`<button type="button" data-cat="${n}" class="${cat===n?'on':''}">${e}<br>${n}</button>`).join('');document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{cat=b.dataset.cat;renderCats();});setupLiquidSegments();}
+function renderQuick(){$('quick').innerHTML=quick.map(n=>`<button type="button" data-q="${n}" class="${quickSelected===n?'on':''}">R$ ${n}</button>`).join('');document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{quickSelected=Number(b.dataset.q);document.querySelectorAll('[data-q]').forEach(x=>x.classList.toggle('on',x===b));$('amount').value=String(b.dataset.q);$('amount').blur();$('formmsg').textContent='Valor de '+fmt(Number(b.dataset.q))+' selecionado.';});setupLiquidSegments();}
 function render(){const {items,bal}=state;const ex=items.filter(x=>x.tipo==='Despesa');const sd=ex.filter(x=>x.conta==='Débito').reduce((s,x)=>s+x.valor,0);const sc=ex.filter(x=>x.conta==='Crédito').reduce((s,x)=>s+x.valor,0);$('debit').textContent=fmt(bal.debito);$('credit').textContent=fmt(bal.credito);$('total').textContent=fmt(bal.debito+bal.credito);$('debitBalance').value=String(bal.debito).replace('.',',');$('creditBalance').value=String(bal.credito).replace('.',',');$('spentdebit').textContent='Débito: '+fmt(sd);$('spentcredit').textContent='Crédito: '+fmt(sc);
  const categoryColors=['#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6','#06B6D4','#EC4899','#84CC16','#F97316','#6366F1','#14B8A6','#D946EF','#A3A3A3','#0EA5E9','#D97706'];const sums=cats.map(([n,e],i)=>{const list=ex.filter(x=>x.categoria===n);return {n,e,list,i,v:list.reduce((s,x)=>s+x.valor,0)}}).filter(x=>x.v>0);const max=Math.max(1,...sums.map(x=>x.v));$('chart').innerHTML=sums.map(x=>`<button type="button" class="baritem ${selected===x.n?'on':''}" data-bar="${x.n}" style="--bar-color:${categoryColors[x.i%categoryColors.length]}"><span class="barval">${fmt(x.v)}</span><span class="stage"><span class="bar" style="height:${Math.max(3,x.v/max*100)}%"></span></span><span class="barlabel">${x.e} ${x.n}</span></button>`).join('')||'<p class="muted">Ainda não há despesas.</p>';document.querySelectorAll('[data-bar]').forEach(b=>b.onclick=()=>{selected=b.dataset.bar;render();});const chosen=sums.find(x=>x.n===selected);$('details').hidden=!chosen;$('details').innerHTML=chosen?`<b>${chosen.e} ${chosen.n} — ${fmt(chosen.v)}</b>`+chosen.list.map(x=>`<div class="row"><div><b>${esc(x.descricao)}</b><div class="muted">${formatLocalDate(x.data)} · ${x.conta}</div></div><b>${fmt(x.valor)}</b></div>`).join(''):'';
  $('accountchart').innerHTML=[['Débito',sd,'#0879e9'],['Crédito',sc,'#8b4de0']].map(([n,v,c])=>`<div class="acol"><b>${fmt(v)}</b><div class="bar" style="height:${Math.max(3,v/Math.max(1,sd,sc)*115)}px;background:${c}"></div>${n}</div>`).join('');
@@ -47,65 +47,88 @@ document.querySelectorAll('[data-account]').forEach(b=>b.onclick=()=>{account=b.
 document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('on',x===b));render();});
 
 
+
 function setupLiquidSegments(){
- document.querySelectorAll('.seg').forEach(seg=>{
-  if(seg.dataset.liquidReady==='1')return;
-  const buttons=[...seg.querySelectorAll('button')];
+ document.querySelectorAll('.seg,.quick,.cats').forEach(group=>{
+  if(group.dataset.liquidReady==='1')return;
+  const buttons=[...group.querySelectorAll('button')];
   if(!buttons.length)return;
-  seg.dataset.liquidReady='1';
+  group.dataset.liquidReady='1';
   const thumb=document.createElement('span');
   thumb.className='liquid-glass-thumb';
   thumb.setAttribute('aria-hidden','true');
-  seg.prepend(thumb);
-  const sync=()=>{
-   const active=Math.max(0,buttons.findIndex(b=>b.classList.contains('on')));
-   const target=buttons[active];
-   thumb.style.width=target.offsetWidth+'px';
-   thumb.style.transform=`translate3d(${target.offsetLeft-seg.clientLeft}px,0,0)`;
-   buttons.forEach((b,i)=>b.setAttribute('aria-pressed',i===active?'true':'false'));
+  group.prepend(thumb);
+  let activeIndex=Math.max(0,buttons.findIndex(b=>b.classList.contains('on')));
+  let dragging=false,pointerId=null,lastIndex=activeIndex,lastX=0;
+  const place=(idx,animate=true)=>{
+   idx=Math.max(0,Math.min(buttons.length-1,idx));
+   const b=buttons[idx],gr=group.getBoundingClientRect(),r=b.getBoundingClientRect();
+   if(!animate)thumb.style.transition='none';
+   else thumb.style.removeProperty('transition');
+   thumb.style.left=(r.left-gr.left-group.clientLeft)+'px';
+   thumb.style.top=(r.top-gr.top-group.clientTop)+'px';
+   thumb.style.width=r.width+'px';
+   thumb.style.height=r.height+'px';
+   buttons.forEach((el,i)=>el.setAttribute('aria-pressed',i===idx?'true':'false'));
+   activeIndex=idx;
   };
-  let pointer=null,lastIndex=-1,lastX=0;
-  const choose=(x,animate=true)=>{
-   const rect=seg.getBoundingClientRect();
-   const local=Math.max(0,Math.min(rect.width-1,x-rect.left));
-   const idx=Math.min(buttons.length-1,Math.floor(local/rect.width*buttons.length));
-   if(idx<0)return;
+  const indexAt=(x,y)=>{
+   let best=0,dist=Infinity;
+   buttons.forEach((b,i)=>{
+    const r=b.getBoundingClientRect(),dx=x-(r.left+r.width/2),dy=y-(r.top+r.height/2);
+    const d=dx*dx+dy*dy;
+    if(d<dist){dist=d;best=i;}
+   });
+   return best;
+  };
+  const selectAt=(x,y)=>{
+   const idx=indexAt(x,y);
    if(idx!==lastIndex){
     lastIndex=idx;
-    thumb.classList.toggle('is-stretching',!animate);
     buttons[idx].click();
-    requestAnimationFrame(()=>{sync();thumb.classList.add('is-pop');setTimeout(()=>thumb.classList.remove('is-pop'),220)});
-   }else sync();
+    place(idx,false);
+    thumb.classList.remove('glass-impact');
+    void thumb.offsetWidth;
+    thumb.classList.add('glass-impact');
+   }
   };
-  seg.addEventListener('pointerdown',e=>{
+  const down=e=>{
    if(e.pointerType==='mouse'&&e.button!==0)return;
-   pointer=e.pointerId;lastX=e.clientX;lastIndex=-1;
-   seg.classList.add('is-dragging');
+   dragging=true;pointerId=e.pointerId;lastIndex=activeIndex;lastX=e.clientX;
+   group.classList.add('is-dragging');
    thumb.classList.add('is-stretching');
-   try{seg.setPointerCapture(pointer)}catch(_){}
-   choose(lastX,false);
-  });
-  seg.addEventListener('pointermove',e=>{
-   if(pointer!==e.pointerId)return;
-   const dx=e.clientX-lastX;lastX=e.clientX;
-   if(Math.abs(dx)>1)thumb.style.setProperty('--glass-stretch',String(Math.min(1.12,1+Math.abs(dx)/180)));
-   choose(lastX,false);
-  });
-  const finish=e=>{
-   if(pointer!==e.pointerId)return;
-   pointer=null;seg.classList.remove('is-dragging');
-   thumb.classList.remove('is-stretching');
-   thumb.style.removeProperty('--glass-stretch');
-   sync();
+   try{group.setPointerCapture(e.pointerId)}catch(_){}
+   e.preventDefault();
+   selectAt(e.clientX,e.clientY);
   };
-  seg.addEventListener('pointerup',finish);
-  seg.addEventListener('pointercancel',finish);
-  buttons.forEach(b=>b.addEventListener('click',()=>requestAnimationFrame(sync)));
-  if('ResizeObserver'in window)new ResizeObserver(sync).observe(seg);
-  requestAnimationFrame(sync);
+  const move=e=>{
+   if(!dragging||e.pointerId!==pointerId)return;
+   e.preventDefault();
+   const dx=e.clientX-lastX;lastX=e.clientX;
+   thumb.style.setProperty('--drag-stretch',String(Math.min(1.18,1+Math.abs(dx)/115)));
+   selectAt(e.clientX,e.clientY);
+  };
+  const up=e=>{
+   if(!dragging||e.pointerId!==pointerId)return;
+   e.preventDefault();dragging=false;pointerId=null;
+   group.classList.remove('is-dragging');
+   thumb.classList.remove('is-stretching');
+   thumb.style.removeProperty('--drag-stretch');
+   place(activeIndex,true);
+  };
+  group.addEventListener('pointerdown',down,{passive:false});
+  group.addEventListener('pointermove',move,{passive:false});
+  group.addEventListener('pointerup',up,{passive:false});
+  group.addEventListener('pointercancel',up,{passive:false});
+  buttons.forEach((b,i)=>b.addEventListener('click',()=>{
+   if(!dragging){lastIndex=i;requestAnimationFrame(()=>place(i,true));}
+  }));
+  if('ResizeObserver'in window)new ResizeObserver(()=>place(activeIndex,true)).observe(group);
+  requestAnimationFrame(()=>place(activeIndex,true));
  });
 }
 setupLiquidSegments();
+
 
 
 $('monthFilter').onchange=()=>{monthFilter=$('monthFilter').value;render();}; $('dayFilter').onchange=()=>{dayFilter=$('dayFilter').value;render();};

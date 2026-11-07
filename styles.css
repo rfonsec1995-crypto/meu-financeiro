@@ -373,3 +373,88 @@ select{
   box-shadow:0 3px 12px rgba(0,0,0,.28),inset 0 1px 1px rgba(255,255,255,.55),inset 0 -2px 4px rgba(0,0,0,.12);
  }
 }
+
+/* V28 — drag gesture must be captured by the segmented control on iOS Safari */
+.seg{
+  touch-action:none!important;
+  -webkit-user-select:none;
+  user-select:none;
+  cursor:grab;
+}
+.seg.is-dragging{cursor:grabbing}
+.seg button{touch-action:none!important;-webkit-user-select:none;user-select:none}
+.seg .liquid-glass-thumb{
+  will-change:transform,width,filter;
+  transform-origin:center;
+  transition:transform .34s cubic-bezier(.2,.9,.25,1.15),width .22s ease,filter .18s ease!important;
+}
+.seg.is-dragging .liquid-glass-thumb{
+  transition:filter .12s ease!important;
+  filter:brightness(1.14) saturate(1.35);
+  transform:scaleX(var(--drag-stretch,1)) translateZ(0);
+}
+.seg .liquid-glass-thumb.glass-impact{animation:glassImpact .26s cubic-bezier(.2,.9,.25,1.2)}
+@keyframes glassImpact{
+  0%{filter:brightness(1);border-radius:13px}
+  45%{filter:brightness(1.28) saturate(1.5);border-radius:18px}
+  100%{filter:brightness(1);border-radius:13px}
+}
+
+
+/* V29 — Liquid Glass unificado: seletores, categorias e valores rápidos */
+.quick,.cats{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border-radius:16px;
+  padding:4px;
+  touch-action:none!important;
+  -webkit-user-select:none;
+  user-select:none;
+}
+.quick .liquid-glass-thumb,.cats .liquid-glass-thumb{
+  position:absolute;z-index:0;left:0;top:0;width:0;height:0;
+  pointer-events:none;border-radius:12px;
+  background:
+    radial-gradient(ellipse at 25% 0%,rgba(255,255,255,.98),transparent 54%),
+    linear-gradient(145deg,rgba(255,255,255,.92),rgba(245,250,255,.62) 42%,rgba(190,220,245,.46));
+  border:1px solid rgba(255,255,255,.88);
+  box-shadow:0 3px 10px rgba(25,50,75,.20),inset 0 1.5px 1px rgba(255,255,255,.98),inset 0 -2px 4px rgba(100,140,180,.18);
+  backdrop-filter:blur(22px) saturate(2);
+  -webkit-backdrop-filter:blur(22px) saturate(2);
+  transition:left .34s cubic-bezier(.2,.9,.25,1.15),top .34s cubic-bezier(.2,.9,.25,1.15),width .22s ease,height .22s ease,filter .18s ease!important;
+  will-change:left,top,width,height,filter;
+}
+.quick button,.cats button{position:relative;z-index:1;touch-action:none!important;-webkit-user-select:none;user-select:none}
+.quick button.on{
+  color:#18334b;
+  background:transparent;
+  border-color:transparent;
+}
+.cats button.on{
+  color:inherit;
+  background:transparent;
+  border-color:transparent;
+}
+.quick .liquid-glass-thumb::after,.cats .liquid-glass-thumb::after{
+  content:"";position:absolute;inset:1px;border-radius:inherit;
+  background:linear-gradient(110deg,transparent 15%,rgba(255,255,255,.7) 45%,transparent 72%);
+  opacity:.58;transform:translateX(-110%);transition:transform .55s ease;
+}
+.quick .liquid-glass-thumb.glass-impact::after,.cats .liquid-glass-thumb.glass-impact::after{transform:translateX(110%)}
+.quick.is-dragging .liquid-glass-thumb,.cats.is-dragging .liquid-glass-thumb{
+  transition:filter .12s ease!important;
+  filter:brightness(1.14) saturate(1.35);
+  transform:scaleX(var(--drag-stretch,1)) translateZ(0);
+}
+.quick .liquid-glass-thumb.glass-impact,.cats .liquid-glass-thumb.glass-impact{
+  animation:glassImpact .26s cubic-bezier(.2,.9,.25,1.2);
+}
+@media(prefers-color-scheme:dark){
+ .quick .liquid-glass-thumb,.cats .liquid-glass-thumb{
+  background:radial-gradient(ellipse at 25% 0%,rgba(255,255,255,.52),transparent 55%),linear-gradient(145deg,rgba(255,255,255,.36),rgba(205,225,245,.18) 48%,rgba(140,175,210,.20));
+  border-color:rgba(255,255,255,.48);
+  box-shadow:0 3px 12px rgba(0,0,0,.28),inset 0 1px 1px rgba(255,255,255,.55),inset 0 -2px 4px rgba(0,0,0,.12);
+ }
+ .quick button.on{color:#fff}
+}
