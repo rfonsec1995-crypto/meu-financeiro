@@ -46,48 +46,67 @@ document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{type=b.datase
 document.querySelectorAll('[data-account]').forEach(b=>b.onclick=()=>{account=b.dataset.account;document.querySelectorAll('[data-account]').forEach(x=>x.classList.toggle('on',x===b));});
 document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('on',x===b));render();});
 
+
 function setupLiquidSegments(){
  document.querySelectorAll('.seg').forEach(seg=>{
+  if(seg.dataset.liquidReady==='1')return;
   const buttons=[...seg.querySelectorAll('button')];
   if(!buttons.length)return;
-  seg.style.setProperty('--glass-count',buttons.length);
-  const sync=()=>{const active=buttons.findIndex(b=>b.classList.contains('on'));seg.style.setProperty('--glass-index',Math.max(0,active));};
-  sync();
-  const activateAt=x=>{
+  seg.dataset.liquidReady='1';
+  const thumb=document.createElement('span');
+  thumb.className='liquid-glass-thumb';
+  thumb.setAttribute('aria-hidden','true');
+  seg.prepend(thumb);
+  const sync=()=>{
+   const active=Math.max(0,buttons.findIndex(b=>b.classList.contains('on')));
+   const target=buttons[active];
+   thumb.style.width=target.offsetWidth+'px';
+   thumb.style.transform=`translate3d(${target.offsetLeft-seg.clientLeft}px,0,0)`;
+   buttons.forEach((b,i)=>b.setAttribute('aria-pressed',i===active?'true':'false'));
+  };
+  let pointer=null,lastIndex=-1,lastX=0;
+  const choose=(x,animate=true)=>{
    const rect=seg.getBoundingClientRect();
    const local=Math.max(0,Math.min(rect.width-1,x-rect.left));
    const idx=Math.min(buttons.length-1,Math.floor(local/rect.width*buttons.length));
-   if(idx>=0 && !buttons[idx].classList.contains('on'))buttons[idx].click();
-   sync();
+   if(idx<0)return;
+   if(idx!==lastIndex){
+    lastIndex=idx;
+    thumb.classList.toggle('is-stretching',!animate);
+    buttons[idx].click();
+    requestAnimationFrame(()=>{sync();thumb.classList.add('is-pop');setTimeout(()=>thumb.classList.remove('is-pop'),220)});
+   }else sync();
   };
-  let startX=0,lastX=0,dragged=false,pointerId=null;
   seg.addEventListener('pointerdown',e=>{
-   if(e.pointerType==='mouse' && e.button!==0)return;
-   startX=lastX=e.clientX;dragged=false;pointerId=e.pointerId;
-   seg.classList.add('dragging');
-   try{seg.setPointerCapture(pointerId)}catch(_){}
+   if(e.pointerType==='mouse'&&e.button!==0)return;
+   pointer=e.pointerId;lastX=e.clientX;lastIndex=-1;
+   seg.classList.add('is-dragging');
+   thumb.classList.add('is-stretching');
+   try{seg.setPointerCapture(pointer)}catch(_){}
+   choose(lastX,false);
   });
   seg.addEventListener('pointermove',e=>{
-   if(pointerId!==e.pointerId)return;
-   lastX=e.clientX;
-   if(Math.abs(lastX-startX)>5)dragged=true;
-   if(dragged){
-    const rect=seg.getBoundingClientRect();
-    const idx=Math.min(buttons.length-1,Math.max(0,Math.floor((lastX-rect.left)/rect.width*buttons.length)));
-    seg.style.setProperty('--glass-index',idx);
-   }
+   if(pointer!==e.pointerId)return;
+   const dx=e.clientX-lastX;lastX=e.clientX;
+   if(Math.abs(dx)>1)thumb.style.setProperty('--glass-stretch',String(Math.min(1.12,1+Math.abs(dx)/180)));
+   choose(lastX,false);
   });
   const finish=e=>{
-   if(pointerId!==e.pointerId)return;
-   if(dragged){e.preventDefault();activateAt(lastX)}
-   pointerId=null;seg.classList.remove('dragging');sync();
+   if(pointer!==e.pointerId)return;
+   pointer=null;seg.classList.remove('is-dragging');
+   thumb.classList.remove('is-stretching');
+   thumb.style.removeProperty('--glass-stretch');
+   sync();
   };
   seg.addEventListener('pointerup',finish);
-  seg.addEventListener('pointercancel',e=>{pointerId=null;seg.classList.remove('dragging');sync()});
-  seg.addEventListener('click',()=>requestAnimationFrame(sync));
+  seg.addEventListener('pointercancel',finish);
+  buttons.forEach(b=>b.addEventListener('click',()=>requestAnimationFrame(sync)));
+  if('ResizeObserver'in window)new ResizeObserver(sync).observe(seg);
+  requestAnimationFrame(sync);
  });
 }
 setupLiquidSegments();
+
 
 $('monthFilter').onchange=()=>{monthFilter=$('monthFilter').value;render();}; $('dayFilter').onchange=()=>{dayFilter=$('dayFilter').value;render();};
 $('add').type='button';
