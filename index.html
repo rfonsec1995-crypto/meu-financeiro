@@ -1,0 +1,51 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101214" id="themeColorMeta"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Meu Financeiro"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="stylesheet" href="styles.css"><title>Meu Financeiro</title></head><body>
+<div id="splash" class="splash" role="status" aria-label="Abrindo Meu Financeiro">
+  <div class="splash-content">
+    <img class="splash-icon" src="icon-192.png" alt="" width="96" height="96">
+    <div class="splash-greeting">Olá Rodrigo</div>
+    <div class="splash-title">Meu Financeiro</div>
+    <div class="splash-subtitle">Seu dinheiro. Seu controle.</div>
+    <div class="splash-loader" aria-hidden="true"><span></span></div>
+  </div>
+</div>
+<main id="app"><header class="app-header"><img class="header-icon" src="icon-192.png" alt="Ícone de carteira"><div class="header-copy"><small>CONTROLE FINANCEIRO · LOCAL</small><h1>Meu Financeiro</h1><small id="storageStatus">Salvo neste iPhone</small></div></header>
+<section class="balance"><small>Saldo total disponível</small><h1 id="total">R$ 0,00</h1><div class="tw"><div>Débito <b id="debit">R$ 0,00</b></div><div>Crédito <b id="credit">R$ 0,00</b></div></div></section>
+<section class="voice-box">
+<h2>🎙️ Lançamento por voz</h2>
+<p class="muted">Toque em Falar pelo teclado, use o microfone do teclado do iPhone e, quando terminar, a confirmação aparecerá automaticamente.</p>
+<label for="voiceText">O que você gastou ou recebeu?</label>
+<textarea id="voiceText" rows="3" placeholder="Ex.: Gastei 45 reais de gasolina no crédito hoje."></textarea>
+<div class="voice-actions">
+<button type="button" id="voiceKeyboard">🎙️ Falar pelo teclado</button>
+</div>
+<p id="voiceMsg" class="voice-msg" aria-live="polite">Toque em “Falar” e depois no microfone do teclado do iPhone. Revise antes de registrar.</p>
+</section>
+<div id="voiceConfirm" class="voice-modal" hidden>
+ <div class="voice-modal-backdrop"></div>
+ <section class="voice-dialog" role="dialog" aria-modal="true" aria-labelledby="voiceConfirmTitle">
+  <h2 id="voiceConfirmTitle">Confirmar lançamento</h2>
+  <p class="muted">Confira se entendi corretamente antes de atualizar seus saldos.</p>
+  <div class="voice-edit-fields">
+   <label>Valor (R$)<input id="voiceEditAmount" inputmode="decimal" placeholder="0,00"></label>
+   <label>Descrição<input id="voiceEditDescription" placeholder="Descrição do lançamento"></label>
+   <label>Categoria<select id="voiceEditCategory"></select></label>
+   <label>Conta
+    <select id="voiceEditAccount"><option value="Débito">Débito</option><option value="Crédito">Crédito</option></select>
+   </label>
+   <label>Tipo
+    <select id="voiceEditType"><option value="Despesa">Despesa</option><option value="Entrada">Entrada</option></select>
+   </label>
+  </div>
+  <div class="voice-modal-actions">
+   <button type="button" id="voiceCancel" class="alt">Não, corrigir</button>
+   <button type="button" id="voiceConfirmSave">Confirmar lançamento</button>
+  </div>
+ </section>
+</div>
+<section><h2>Novo lançamento</h2><div class="seg"><button data-type="Despesa" class="on">− Despesa</button><button data-type="Entrada">＋ Entrada</button></div><div class="seg"><button data-account="Débito" class="on">Débito</button><button data-account="Crédito">Crédito</button></div><label>Valor (R$)<input id="amount" inputmode="decimal" placeholder="Digite o valor"></label><small>Valores rápidos</small><div id="quick" class="quick"></div><label>Descrição<input id="description" placeholder="O que você comprou ou recebeu?"></label><b>Categoria</b><div id="categories" class="cats"></div><p id="formmsg"></p><button type="button" id="add">＋ Registrar lançamento</button></section>
+<section><h2>Atualizar saldos</h2><div class="tw"><label>Saldo do débito<input id="debitBalance" inputmode="decimal"></label><label>Saldo do crédito<input id="creditBalance" inputmode="decimal"></label></div><button id="update" class="alt">Atualizar valores</button><p id="balmsg"></p></section>
+
+<section><h2>Gastos por categoria</h2><small>Somente categorias com gastos aparecem. Toque na coluna para ver os detalhes.</small><div id="chart" class="chart"></div><div id="details" class="details" hidden></div></section>
+<section><h2>Gastos por conta</h2><small>Comparativo de despesas no débito e no crédito.</small><div id="accountchart" class="accountchart"></div><div class="tw"><b id="spentdebit"></b><b id="spentcredit"></b></div></section>
+<section><h2>Backup dos dados</h2><p class="muted">Exporte uma cópia para guardar em Arquivos/iCloud ou importe um backup anterior.</p><button id="export" class="alt">Exportar backup</button><label>Restaurar backup<input id="importFile" type="file" accept="application/json"></label><p id="backupmsg"></p></section><section><h2>Histórico de lançamentos</h2><div class="seg"><button data-filter="Todos" class="on">Todos</button><button data-filter="Débito">Débito</button><button data-filter="Crédito">Crédito</button></div><label class="month-filter-label">Mês do lançamento<select id="monthFilter"><option value="Todos">Todos os meses</option></select></label><label class="month-filter-label">Dia do lançamento<select id="dayFilter"><option value="Todos">Todos os dias</option></select></label><div id="history"></div></section><footer>Seus lançamentos ficam armazenados localmente neste iPhone. Não há conta nem sincronização em nuvem.</footer></main>
+<script src="app.js"></script></body></html>
