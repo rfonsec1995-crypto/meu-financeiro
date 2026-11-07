@@ -179,3 +179,69 @@
 .history-day{margin:18px 0 22px}
 .history-day h3{font-size:14px;font-weight:700;margin:0 0 9px;padding:0 0 8px;border-bottom:1px solid var(--line,rgba(128,128,128,.22));}
 .history-day .history-row{margin-top:7px}
+
+/* V25 — impedir corte de valores nos gráficos, especialmente em telas estreitas */
+.chart{
+  box-sizing:border-box;
+  gap:14px;
+  padding:18px 14px 14px;
+  min-height:270px;
+  overflow-x:auto;
+  overflow-y:visible;
+  scroll-padding-inline:14px;
+}
+.baritem{
+  box-sizing:border-box;
+  min-width:116px;
+  max-width:116px;
+  flex:0 0 116px;
+  padding:9px 7px 7px;
+  gap:10px;
+  overflow:visible;
+}
+.barval{
+  display:block;
+  box-sizing:border-box;
+  width:100%;
+  max-width:100%;
+  min-height:28px;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  word-break:normal;
+  font-size:clamp(9px,2.7vw,11px);
+  line-height:1.2;
+  padding:0 1px;
+}
+.stage{height:158px;flex:0 0 158px;min-width:0}
+.barlabel{
+  width:100%;
+  min-height:34px;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  word-break:normal;
+  line-height:1.25;
+}
+.accountchart{
+  box-sizing:border-box;
+  width:100%;
+  min-height:190px;
+  height:auto;
+  gap:12px;
+  padding:16px 10px;
+  overflow:visible;
+}
+.acol{
+  min-width:0;
+  overflow:visible;
+  flex:1 1 0;
+  overflow-wrap:anywhere;
+}
+.acol>b{
+  display:block;
+  max-width:100%;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+  font-size:clamp(10px,3vw,12px);
+  line-height:1.25;
+}
