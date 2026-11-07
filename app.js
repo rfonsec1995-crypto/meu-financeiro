@@ -45,6 +45,50 @@ function render(){const {items,bal}=state;const ex=items.filter(x=>x.tipo==='Des
 document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{type=b.dataset.type;document.querySelectorAll('[data-type]').forEach(x=>x.classList.toggle('on',x===b));});
 document.querySelectorAll('[data-account]').forEach(b=>b.onclick=()=>{account=b.dataset.account;document.querySelectorAll('[data-account]').forEach(x=>x.classList.toggle('on',x===b));});
 document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('on',x===b));render();});
+
+function setupLiquidSegments(){
+ document.querySelectorAll('.seg').forEach(seg=>{
+  const buttons=[...seg.querySelectorAll('button')];
+  if(!buttons.length)return;
+  seg.style.setProperty('--glass-count',buttons.length);
+  const sync=()=>{const active=buttons.findIndex(b=>b.classList.contains('on'));seg.style.setProperty('--glass-index',Math.max(0,active));};
+  sync();
+  const activateAt=x=>{
+   const rect=seg.getBoundingClientRect();
+   const local=Math.max(0,Math.min(rect.width-1,x-rect.left));
+   const idx=Math.min(buttons.length-1,Math.floor(local/rect.width*buttons.length));
+   if(idx>=0 && !buttons[idx].classList.contains('on'))buttons[idx].click();
+   sync();
+  };
+  let startX=0,lastX=0,dragged=false,pointerId=null;
+  seg.addEventListener('pointerdown',e=>{
+   if(e.pointerType==='mouse' && e.button!==0)return;
+   startX=lastX=e.clientX;dragged=false;pointerId=e.pointerId;
+   seg.classList.add('dragging');
+   try{seg.setPointerCapture(pointerId)}catch(_){}
+  });
+  seg.addEventListener('pointermove',e=>{
+   if(pointerId!==e.pointerId)return;
+   lastX=e.clientX;
+   if(Math.abs(lastX-startX)>5)dragged=true;
+   if(dragged){
+    const rect=seg.getBoundingClientRect();
+    const idx=Math.min(buttons.length-1,Math.max(0,Math.floor((lastX-rect.left)/rect.width*buttons.length)));
+    seg.style.setProperty('--glass-index',idx);
+   }
+  });
+  const finish=e=>{
+   if(pointerId!==e.pointerId)return;
+   if(dragged){e.preventDefault();activateAt(lastX)}
+   pointerId=null;seg.classList.remove('dragging');sync();
+  };
+  seg.addEventListener('pointerup',finish);
+  seg.addEventListener('pointercancel',e=>{pointerId=null;seg.classList.remove('dragging');sync()});
+  seg.addEventListener('click',()=>requestAnimationFrame(sync));
+ });
+}
+setupLiquidSegments();
+
 $('monthFilter').onchange=()=>{monthFilter=$('monthFilter').value;render();}; $('dayFilter').onchange=()=>{dayFilter=$('dayFilter').value;render();};
 $('add').type='button';
 $('add').onclick=()=>{

@@ -245,3 +245,99 @@
   font-size:clamp(10px,3vw,12px);
   line-height:1.25;
 }
+
+/* V26 — Liquid Glass segmented selectors inspired by iOS */
+.seg{
+  --glass-count:2;
+  --glass-index:0;
+  position:relative;
+  isolation:isolate;
+  display:flex;
+  align-items:stretch;
+  gap:4px;
+  padding:4px;
+  margin:12px 0;
+  border:1px solid rgba(255,255,255,.34);
+  border-radius:17px;
+  background:linear-gradient(145deg,rgba(255,255,255,.42),rgba(220,230,240,.16) 48%,rgba(255,255,255,.25));
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.65),0 5px 16px rgba(30,50,70,.10);
+  backdrop-filter:blur(22px) saturate(1.65);
+  -webkit-backdrop-filter:blur(22px) saturate(1.65);
+  overflow:hidden;
+  touch-action:pan-y;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.seg::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  top:4px;
+  bottom:4px;
+  left:4px;
+  width:calc((100% - 8px - (var(--glass-count) - 1)*4px)/var(--glass-count));
+  transform:translateX(calc(var(--glass-index)*(100% + 4px)));
+  border-radius:13px;
+  background:linear-gradient(155deg,rgba(255,255,255,.92),rgba(255,255,255,.48) 45%,rgba(220,235,250,.58));
+  border:1px solid rgba(255,255,255,.82);
+  box-shadow:0 2px 7px rgba(20,40,60,.16),inset 0 1px 1px rgba(255,255,255,.95),inset 0 -1px 2px rgba(100,130,160,.12);
+  backdrop-filter:blur(18px) saturate(1.8);
+  -webkit-backdrop-filter:blur(18px) saturate(1.8);
+  transition:transform .28s cubic-bezier(.2,.85,.25,1),width .2s ease;
+  pointer-events:none;
+}
+.seg.dragging::before{transition:none;filter:brightness(1.04)}
+.seg button,.seg button.on{
+  position:relative;
+  z-index:1;
+  flex:1 1 0;
+  min-width:0;
+  margin:0;
+  padding:11px 7px;
+  border:1px solid transparent;
+  border-radius:12px;
+  background:transparent;
+  color:rgba(30,43,54,.78);
+  box-shadow:none;
+  font-weight:650;
+  transition:color .18s ease,transform .18s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.seg button.on{
+  color:#142b3c;
+  border-color:transparent;
+  background:transparent;
+  text-shadow:0 1px 0 rgba(255,255,255,.55);
+}
+.seg button:active{transform:scale(.97)}
+.seg button:focus-visible{outline:2px solid rgba(40,130,220,.8);outline-offset:-2px}
+select{
+  border:1px solid rgba(255,255,255,.48)!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.62),rgba(225,235,245,.30))!important;
+  color:inherit!important;
+  border-radius:15px!important;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.72),0 4px 12px rgba(30,50,70,.08);
+  backdrop-filter:blur(18px) saturate(1.5);
+  -webkit-backdrop-filter:blur(18px) saturate(1.5);
+}
+@media(prefers-color-scheme:dark){
+  .seg{
+    border-color:rgba(255,255,255,.18);
+    background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(80,95,110,.12) 55%,rgba(255,255,255,.08));
+    box-shadow:inset 0 1px 1px rgba(255,255,255,.20),0 6px 18px rgba(0,0,0,.18);
+  }
+  .seg::before{
+    background:linear-gradient(155deg,rgba(255,255,255,.38),rgba(210,225,240,.18) 50%,rgba(255,255,255,.25));
+    border-color:rgba(255,255,255,.42);
+    box-shadow:0 2px 9px rgba(0,0,0,.22),inset 0 1px 1px rgba(255,255,255,.45);
+  }
+  .seg button,.seg button.on{color:rgba(255,255,255,.76)}
+  .seg button.on{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+  select{
+    border-color:rgba(255,255,255,.22)!important;
+    background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(60,70,80,.22))!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .seg::before,.seg button{transition:none}
+}
