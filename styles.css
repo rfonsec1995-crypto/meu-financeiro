@@ -376,13 +376,13 @@ select{
 
 /* V28 — drag gesture must be captured by the segmented control on iOS Safari */
 .seg{
-  touch-action:none!important;
+  touch-action:manipulation;
   -webkit-user-select:none;
   user-select:none;
   cursor:grab;
 }
 .seg.is-dragging{cursor:grabbing}
-.seg button{touch-action:none!important;-webkit-user-select:none;user-select:none}
+.seg button{touch-action:manipulation;-webkit-user-select:none;user-select:none}
 .seg .liquid-glass-thumb{
   will-change:transform,width,filter;
   transform-origin:center;
@@ -391,7 +391,7 @@ select{
 .seg.is-dragging .liquid-glass-thumb{
   transition:filter .12s ease!important;
   filter:brightness(1.14) saturate(1.35);
-  transform:scaleX(var(--drag-stretch,1)) translateZ(0);
+  
 }
 .seg .liquid-glass-thumb.glass-impact{animation:glassImpact .26s cubic-bezier(.2,.9,.25,1.2)}
 @keyframes glassImpact{
@@ -401,14 +401,14 @@ select{
 }
 
 
-/* V29 — Liquid Glass unificado: seletores, categorias e valores rápidos */
+/* V30 — Liquid Glass sem gesto de arraste */
 .quick,.cats{
   position:relative;
   isolation:isolate;
   overflow:hidden;
   border-radius:16px;
   padding:4px;
-  touch-action:none!important;
+  touch-action:manipulation;
   -webkit-user-select:none;
   user-select:none;
 }
@@ -425,7 +425,7 @@ select{
   transition:left .34s cubic-bezier(.2,.9,.25,1.15),top .34s cubic-bezier(.2,.9,.25,1.15),width .22s ease,height .22s ease,filter .18s ease!important;
   will-change:left,top,width,height,filter;
 }
-.quick button,.cats button{position:relative;z-index:1;touch-action:none!important;-webkit-user-select:none;user-select:none}
+.quick button,.cats button{position:relative;z-index:1;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 .quick button.on{
   color:#18334b;
   background:transparent;
@@ -442,11 +442,6 @@ select{
   opacity:.58;transform:translateX(-110%);transition:transform .55s ease;
 }
 .quick .liquid-glass-thumb.glass-impact::after,.cats .liquid-glass-thumb.glass-impact::after{transform:translateX(110%)}
-.quick.is-dragging .liquid-glass-thumb,.cats.is-dragging .liquid-glass-thumb{
-  transition:filter .12s ease!important;
-  filter:brightness(1.14) saturate(1.35);
-  transform:scaleX(var(--drag-stretch,1)) translateZ(0);
-}
 .quick .liquid-glass-thumb.glass-impact,.cats .liquid-glass-thumb.glass-impact{
   animation:glassImpact .26s cubic-bezier(.2,.9,.25,1.2);
 }

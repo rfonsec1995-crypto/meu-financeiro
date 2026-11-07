@@ -59,7 +59,6 @@ function setupLiquidSegments(){
   thumb.setAttribute('aria-hidden','true');
   group.prepend(thumb);
   let activeIndex=Math.max(0,buttons.findIndex(b=>b.classList.contains('on')));
-  let dragging=false,pointerId=null,lastIndex=activeIndex,lastX=0;
   const place=(idx,animate=true)=>{
    idx=Math.max(0,Math.min(buttons.length-1,idx));
    const b=buttons[idx],gr=group.getBoundingClientRect(),r=b.getBoundingClientRect();
@@ -69,59 +68,14 @@ function setupLiquidSegments(){
    thumb.style.top=(r.top-gr.top-group.clientTop)+'px';
    thumb.style.width=r.width+'px';
    thumb.style.height=r.height+'px';
-   buttons.forEach((el,i)=>el.setAttribute('aria-pressed',i===idx?'true':'false'));
    activeIndex=idx;
   };
-  const indexAt=(x,y)=>{
-   let best=0,dist=Infinity;
-   buttons.forEach((b,i)=>{
-    const r=b.getBoundingClientRect(),dx=x-(r.left+r.width/2),dy=y-(r.top+r.height/2);
-    const d=dx*dx+dy*dy;
-    if(d<dist){dist=d;best=i;}
-   });
-   return best;
-  };
-  const selectAt=(x,y)=>{
-   const idx=indexAt(x,y);
-   if(idx!==lastIndex){
-    lastIndex=idx;
-    buttons[idx].click();
-    place(idx,false);
-    thumb.classList.remove('glass-impact');
-    void thumb.offsetWidth;
-    thumb.classList.add('glass-impact');
-   }
-  };
-  const down=e=>{
-   if(e.pointerType==='mouse'&&e.button!==0)return;
-   dragging=true;pointerId=e.pointerId;lastIndex=activeIndex;lastX=e.clientX;
-   group.classList.add('is-dragging');
-   thumb.classList.add('is-stretching');
-   try{group.setPointerCapture(e.pointerId)}catch(_){}
-   e.preventDefault();
-   selectAt(e.clientX,e.clientY);
-  };
-  const move=e=>{
-   if(!dragging||e.pointerId!==pointerId)return;
-   e.preventDefault();
-   const dx=e.clientX-lastX;lastX=e.clientX;
-   thumb.style.setProperty('--drag-stretch',String(Math.min(1.18,1+Math.abs(dx)/115)));
-   selectAt(e.clientX,e.clientY);
-  };
-  const up=e=>{
-   if(!dragging||e.pointerId!==pointerId)return;
-   e.preventDefault();dragging=false;pointerId=null;
-   group.classList.remove('is-dragging');
-   thumb.classList.remove('is-stretching');
-   thumb.style.removeProperty('--drag-stretch');
-   place(activeIndex,true);
-  };
-  group.addEventListener('pointerdown',down,{passive:false});
-  group.addEventListener('pointermove',move,{passive:false});
-  group.addEventListener('pointerup',up,{passive:false});
-  group.addEventListener('pointercancel',up,{passive:false});
   buttons.forEach((b,i)=>b.addEventListener('click',()=>{
-   if(!dragging){lastIndex=i;requestAnimationFrame(()=>place(i,true));}
+   activeIndex=i;
+   requestAnimationFrame(()=>place(i,true));
+   thumb.classList.remove('glass-impact');
+   void thumb.offsetWidth;
+   thumb.classList.add('glass-impact');
   }));
   if('ResizeObserver'in window)new ResizeObserver(()=>place(activeIndex,true)).observe(group);
   requestAnimationFrame(()=>place(activeIndex,true));
