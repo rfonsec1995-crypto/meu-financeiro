@@ -453,3 +453,6 @@ select{
  }
  .quick button.on{color:#fff}
 }
+
+/* V32 — horário dos lançamentos no histórico */
+.history-time{font-variant-numeric:tabular-nums;white-space:nowrap;opacity:.88}
