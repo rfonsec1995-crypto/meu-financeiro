@@ -1,4 +1,4 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101214" id="themeColorMeta"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Meu Financeiro"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="stylesheet" href="styles.css"><title>Meu Financeiro</title></head><body>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f3f5f8" id="themeColorMeta"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Meu Financeiro"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="stylesheet" href="styles.css"><title>Meu Financeiro</title></head><body>
 <div id="splash" class="splash" role="status" aria-label="Abrindo Meu Financeiro">
   <div class="splash-content">
     <img class="splash-icon" src="icon-192.png" alt="" width="96" height="96">
@@ -9,7 +9,16 @@
   </div>
 </div>
 <main id="app"><header class="app-header"><img class="header-icon" src="icon-192.png" alt="Ícone de carteira"><div class="header-copy"><small class="brand-kicker"><span class="brand-dot"></span> FINANÇAS PESSOAIS · PRIVADO</small><h1>Meu Financeiro</h1><small id="storageStatus">Salvo neste iPhone</small></div></header>
+
+<div class="tab-page is-active" data-page="home" aria-label="Início">
 <section class="balance"><div class="balance-topline"><span class="balance-eyebrow"><i></i> VISÃO GERAL</span><span class="balance-period">SEU PATRIMÔNIO</span></div><small>Saldo total disponível</small><h1 id="total">R$ 0,00</h1><div class="tw"><div>Débito <b id="debit">R$ 0,00</b></div><div>Crédito <b id="credit">R$ 0,00</b></div></div><div class="balance-art" aria-hidden="true"><svg viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="153" cy="74" r="63" fill="url(#g1)" opacity=".24"/><circle cx="153" cy="74" r="46" stroke="white" stroke-opacity=".28" stroke-width="1.2"/><path d="M108 105L135 80L154 91L190 48" stroke="#B9FFE9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M172 48H190V66" stroke="#B9FFE9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><rect x="24" y="23" width="82" height="55" rx="13" fill="url(#g2)" stroke="white" stroke-opacity=".48"/><path d="M38 40H88M38 51H70" stroke="white" stroke-opacity=".78" stroke-width="3" stroke-linecap="round"/><circle cx="87" cy="65" r="5" fill="#C7FFF0"/><path d="M30 112C51 92 67 90 88 103" stroke="white" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/><defs><linearGradient id="g1" x1="90" y1="11" x2="210" y2="138" gradientUnits="userSpaceOnUse"><stop stop-color="#8CF2D0"/><stop offset="1" stop-color="#56A8FF"/></linearGradient><linearGradient id="g2" x1="24" y1="23" x2="106" y2="78" gradientUnits="userSpaceOnUse"><stop stop-color="white" stop-opacity=".35"/><stop offset="1" stop-color="white" stop-opacity=".08"/></linearGradient></defs></svg></div></section>
+
+<div class="home-shortcuts">
+ <button type="button" class="shortcut-card" data-go="transactions"><span class="shortcut-icon">＋</span><span><b>Novo lançamento</b><small>Registre uma despesa ou entrada</small></span><span class="shortcut-arrow">›</span></button>
+ <button type="button" class="shortcut-card" data-go="history"><span class="shortcut-icon history-shortcut">↗</span><span><b>Ver histórico</b><small>Acompanhe suas movimentações</small></span><span class="shortcut-arrow">›</span></button>
+</div>
+</div>
+<div class="tab-page" data-page="transactions" aria-label="Lançamentos">
 <section class="voice-box">
 <div class="voice-heading"><span class="voice-illustration" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><rect x="17" y="5" width="14" height="25" rx="7" stroke="currentColor" stroke-width="2.4"/><path d="M11 23a13 13 0 0 0 26 0M24 36v7m-8 0h16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M8 12l3 2m29-2-3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><div><h2> lançamento por voz</h2><small>Registre sem digitar</small></div></div>
 <p class="muted">Toque em Falar pelo teclado, use o microfone do teclado do iPhone e, quando terminar, a confirmação aparecerá automaticamente.</p>
@@ -20,6 +29,24 @@
 </div>
 <p id="voiceMsg" class="voice-msg" aria-live="polite">Toque em “Falar” e depois no microfone do teclado do iPhone. Revise antes de registrar.</p>
 </section>
+
+<section><h2>Novo lançamento</h2><div class="seg"><button data-type="Despesa" class="on">− Despesa</button><button data-type="Entrada">＋ Entrada</button></div><div class="seg"><button data-account="Débito" class="on">Débito</button><button data-account="Crédito">Crédito</button></div><label>Valor (R$)<input id="amount" inputmode="decimal" placeholder="Digite o valor"></label><small>Valores rápidos</small><div id="quick" class="quick"></div><label>Descrição<input id="description" placeholder="O que você comprou ou recebeu?"></label><b>Categoria</b><div id="categories" class="cats"></div><p id="formmsg"></p><button type="button" id="add">＋ Registrar lançamento</button></section>
+
+</div>
+<div class="tab-page" data-page="analytics" aria-label="Análises">
+<section><h2>Gastos por categoria</h2><small>Somente categorias com gastos aparecem. Toque na coluna para ver os detalhes.</small><div id="chart" class="chart"></div><div id="details" class="details" hidden></div></section>
+<section><h2>Gastos por conta</h2><small>Comparativo de despesas no débito e no crédito.</small><div id="accountchart" class="accountchart"></div><div class="tw"><b id="spentdebit"></b><b id="spentcredit"></b></div></section>
+
+</div>
+<div class="tab-page" data-page="history" aria-label="Histórico">
+<section><h2>Histórico de lançamentos</h2><div class="seg"><button data-filter="Todos" class="on">Todos</button><button data-filter="Débito">Débito</button><button data-filter="Crédito">Crédito</button></div><label class="month-filter-label">Mês do lançamento<select id="monthFilter"><option value="Todos">Todos os meses</option></select></label><label class="month-filter-label">Dia do lançamento<select id="dayFilter"><option value="Todos">Todos os dias</option></select></label><div id="history"></div></section>
+</div>
+<div class="tab-page" data-page="menu" aria-label="Menu">
+<section><h2>Atualizar saldos</h2><div class="tw"><label>Saldo do débito<input id="debitBalance" inputmode="decimal"></label><label>Saldo do crédito<input id="creditBalance" inputmode="decimal"></label></div><button id="update" class="alt">Atualizar valores</button><p id="balmsg"></p></section>
+
+
+<section><h2>Backup dos dados</h2><p class="muted">Exporte uma cópia para guardar em Arquivos/iCloud ou importe um backup anterior.</p><button id="export" class="alt">Exportar backup</button><label>Restaurar backup<input id="importFile" type="file" accept="application/json"></label><p id="backupmsg"></p></section>
+</div>
 <div id="voiceConfirm" class="voice-modal" hidden>
  <div class="voice-modal-backdrop"></div>
  <section class="voice-dialog" role="dialog" aria-modal="true" aria-labelledby="voiceConfirmTitle">
@@ -42,10 +69,13 @@
   </div>
  </section>
 </div>
-<section><h2>Novo lançamento</h2><div class="seg"><button data-type="Despesa" class="on">− Despesa</button><button data-type="Entrada">＋ Entrada</button></div><div class="seg"><button data-account="Débito" class="on">Débito</button><button data-account="Crédito">Crédito</button></div><label>Valor (R$)<input id="amount" inputmode="decimal" placeholder="Digite o valor"></label><small>Valores rápidos</small><div id="quick" class="quick"></div><label>Descrição<input id="description" placeholder="O que você comprou ou recebeu?"></label><b>Categoria</b><div id="categories" class="cats"></div><p id="formmsg"></p><button type="button" id="add">＋ Registrar lançamento</button></section>
-<section><h2>Atualizar saldos</h2><div class="tw"><label>Saldo do débito<input id="debitBalance" inputmode="decimal"></label><label>Saldo do crédito<input id="creditBalance" inputmode="decimal"></label></div><button id="update" class="alt">Atualizar valores</button><p id="balmsg"></p></section>
+<footer>Seus lançamentos ficam armazenados localmente neste iPhone. Não há conta nem sincronização em nuvem.</footer>
+<nav class="bottom-nav" aria-label="Navegação principal">
+ <button type="button" class="nav-item active" data-tab="home" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8v9.1a1.1 1.1 0 0 1-1.1 1.1h-5.2v-6.3H9.3V21H4.1A1.1 1.1 0 0 1 3 19.9z" fill="currentColor"/></svg><span>Início</span></button>
+ <button type="button" class="nav-item" data-tab="transactions"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="7" rx="1.7"/><rect x="3" y="14" width="8" height="7" rx="1.7"/><rect x="14" y="14" width="7" height="7" rx="1.7"/></svg><span>Lançamentos</span></button>
+ <button type="button" class="nav-item" data-tab="analytics"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Análises</span></button>
+ <button type="button" class="nav-item" data-tab="history"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7v5h5"/><path d="M5.2 12a7 7 0 1 0 2-5L4 10"/><path d="M12 8v4l3 2"/></svg><span>Histórico</span></button>
+ <button type="button" class="nav-item" data-tab="menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="7" cy="6" r="1.2" fill="currentColor"/><circle cx="17" cy="12" r="1.2" fill="currentColor"/><circle cx="9" cy="18" r="1.2" fill="currentColor"/></svg><span>Menu</span></button>
+</nav>
 
-<section><h2>Gastos por categoria</h2><small>Somente categorias com gastos aparecem. Toque na coluna para ver os detalhes.</small><div id="chart" class="chart"></div><div id="details" class="details" hidden></div></section>
-<section><h2>Gastos por conta</h2><small>Comparativo de despesas no débito e no crédito.</small><div id="accountchart" class="accountchart"></div><div class="tw"><b id="spentdebit"></b><b id="spentcredit"></b></div></section>
-<section><h2>Backup dos dados</h2><p class="muted">Exporte uma cópia para guardar em Arquivos/iCloud ou importe um backup anterior.</p><button id="export" class="alt">Exportar backup</button><label>Restaurar backup<input id="importFile" type="file" accept="application/json"></label><p id="backupmsg"></p></section><section><h2>Histórico de lançamentos</h2><div class="seg"><button data-filter="Todos" class="on">Todos</button><button data-filter="Débito">Débito</button><button data-filter="Crédito">Crédito</button></div><label class="month-filter-label">Mês do lançamento<select id="monthFilter"><option value="Todos">Todos os meses</option></select></label><label class="month-filter-label">Dia do lançamento<select id="dayFilter"><option value="Todos">Todos os dias</option></select></label><div id="history"></div></section><footer>Seus lançamentos ficam armazenados localmente neste iPhone. Não há conta nem sincronização em nuvem.</footer></main>
 <script src="app.js"></script></body></html>
