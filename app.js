@@ -389,7 +389,7 @@ $('voiceText').addEventListener('input',()=>{
  const media=window.matchMedia('(prefers-color-scheme: dark)');
  function syncSystemTheme(){
   document.documentElement.dataset.theme=media.matches?'dark':'light';
-  if(meta)meta.setAttribute('content',media.matches?'#111827':'#f3f5f8');
+  if(meta)meta.setAttribute('content',media.matches?'#171629':'#f3f2fa');
   document.documentElement.style.colorScheme=media.matches?'dark':'light';
  }
  syncSystemTheme();

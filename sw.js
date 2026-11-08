@@ -1,4 +1,4 @@
-const CACHE='meu-financeiro-local-v46-visual-experience';
+const CACHE='meu-financeiro-local-v47-identidade-lilas';
 const FILES=[
  './','./index.html','./styles.css','./app.js','./manifest.webmanifest',
  './icon-180.png','./icon-192.png','./icon-512.png'
