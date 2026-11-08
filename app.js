@@ -32,7 +32,19 @@ const initialItems=[
 ];
 let state=loadState(),type='Despesa',account='Débito',cat='Alimentação',filter='Todos',monthFilter='Todos',dayFilter='Todos',selected='Alimentação',quickSelected=null;
 function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const s=JSON.parse(raw);if(s&&s.bal&&Array.isArray(s.items))return s;}}catch(e){}return {bal:{debito:1610.38,credito:201.66},items:initialItems};}
-function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));$('storageStatus').textContent='Salvo neste iPhone';}catch(e){$('storageStatus').textContent='Não foi possível salvar neste aparelho: '+e.message;}}
+function saveState(){
+ try{
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+  const status=$('storageStatus');
+  if(status)status.textContent='Salvo neste iPhone';
+  return true;
+ }catch(e){
+  const status=$('storageStatus');
+  if(status)status.textContent='Não foi possível salvar neste aparelho: '+e.message;
+  console.error('Falha ao salvar Meu Financeiro:',e);
+  return false;
+ }
+}
 function renderCats(){$('categories').dataset.liquidReady='0';$('categories').innerHTML=cats.map(([n,e])=>`<button type="button" data-cat="${n}" class="${cat===n?'on':''}">${e}<br>${n}</button>`).join('');document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{cat=b.dataset.cat;renderCats();});setupLiquidSegments();}
 function renderQuick(){$('quick').innerHTML=quick.map(n=>`<button type="button" data-q="${n}" class="${quickSelected===n?'on':''}">R$ ${n}</button>`).join('');document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{quickSelected=Number(b.dataset.q);document.querySelectorAll('[data-q]').forEach(x=>x.classList.toggle('on',x===b));$('amount').value=String(b.dataset.q);$('amount').blur();$('formmsg').textContent='Valor de '+fmt(Number(b.dataset.q))+' selecionado.';});setupLiquidSegments();}
 function render(){const {items,bal}=state;const ex=items.filter(x=>x.tipo==='Despesa');const sd=ex.filter(x=>x.conta==='Débito').reduce((s,x)=>s+x.valor,0);const sc=ex.filter(x=>x.conta==='Crédito').reduce((s,x)=>s+x.valor,0);$('debit').textContent=fmt(bal.debito);$('credit').textContent=fmt(bal.credito);$('total').textContent=fmt(bal.debito+bal.credito);$('debitBalance').value=String(bal.debito).replace('.',',');$('creditBalance').value=String(bal.credito).replace('.',',');$('spentdebit').textContent='Débito: '+fmt(sd);$('spentcredit').textContent='Crédito: '+fmt(sc);

@@ -7,7 +7,7 @@
     splash.classList.add('hide');
     window.setTimeout(function(){ if(splash.parentNode)splash.parentNode.removeChild(splash); },800);
   }
-  window.setTimeout(releaseSplash,5200);
+  window.setTimeout(releaseSplash,4800);
   window.addEventListener('error',function(){ releaseSplash(); });
   window.addEventListener('unhandledrejection',function(){ releaseSplash(); });
 })();
@@ -15,7 +15,7 @@
 </head><body>
 <div id="splash" class="splash" role="status" aria-label="Abrindo Meu Financeiro">
   <div class="splash-content">
-    <img class="splash-icon" src="icon-512.png?v=40" alt="" width="96" height="96">
+    <img class="splash-icon" src="icon-512.png" alt="" width="96" height="96">
     <div class="splash-greeting">SEU DINHEIRO, EM EQUILÍBRIO</div>
     <div class="splash-title">Meu Financeiro</div>
     <div class="splash-subtitle">Seu dinheiro. Seu controle.</div>

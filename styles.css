@@ -363,3 +363,9 @@ body{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
  .welcome-line{color:#9eacc0}
  .welcome-line strong{color:#9dbaff}
 }
+
+/* V42 — correção de bloqueio de interface e splash resiliente */
+.splash.hide{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+.splash:not(.hide){pointer-events:auto}
+#app{position:relative;z-index:1;pointer-events:auto}
+.bottom-nav{pointer-events:auto}
