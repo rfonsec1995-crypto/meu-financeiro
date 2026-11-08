@@ -12,3 +12,5 @@ A hospedagem HTTPS (por exemplo, Netlify) ainda entrega os arquivos do aplicativ
 - O visual do aplicativo muda automaticamente entre claro e escuro conforme o tema do iPhone.
 - Limitação do iOS: o ícone instalado na Tela de Início é estático e não troca automaticamente com o tema. O ícone atual permanece; para mudar o desenho, é necessário substituir o ícone e reinstalar/adicionar o atalho novamente.
 - Ao publicar esta atualização no mesmo endereço Netlify, os dados locais existentes devem permanecer, desde que os dados do Safari/site não sejam apagados. Faça um backup antes da atualização por segurança.
+
+V41: splash possui encerramento de segurança independente do app.js; ícone da tela inicial atualizado com apple-touch-icon 180x180 e cache versionado.
