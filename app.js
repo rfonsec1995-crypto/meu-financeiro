@@ -49,7 +49,20 @@ function renderCats(){$('categories').dataset.liquidReady='0';$('categories').in
 function renderQuick(){$('quick').innerHTML=quick.map(n=>`<button type="button" data-q="${n}" class="${quickSelected===n?'on':''}">R$ ${n}</button>`).join('');document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{quickSelected=Number(b.dataset.q);document.querySelectorAll('[data-q]').forEach(x=>x.classList.toggle('on',x===b));$('amount').value=String(b.dataset.q);$('amount').blur();$('formmsg').textContent='Valor de '+fmt(Number(b.dataset.q))+' selecionado.';});setupLiquidSegments();}
 function render(){const {items,bal}=state;const ex=items.filter(x=>x.tipo==='Despesa');const sd=ex.filter(x=>x.conta==='Débito').reduce((s,x)=>s+x.valor,0);const sc=ex.filter(x=>x.conta==='Crédito').reduce((s,x)=>s+x.valor,0);$('debit').textContent=fmt(bal.debito);$('credit').textContent=fmt(bal.credito);$('total').textContent=fmt(bal.debito+bal.credito);$('debitBalance').value=String(bal.debito).replace('.',',');$('creditBalance').value=String(bal.credito).replace('.',',');$('spentdebit').textContent='Débito: '+fmt(sd);$('spentcredit').textContent='Crédito: '+fmt(sc);
  const categoryColors=['#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6','#06B6D4','#EC4899','#84CC16','#F97316','#6366F1','#14B8A6','#D946EF','#A3A3A3','#0EA5E9','#D97706'];const sums=cats.map(([n,e],i)=>{const list=ex.filter(x=>x.categoria===n);return {n,e,list,i,v:list.reduce((s,x)=>s+x.valor,0)}}).filter(x=>x.v>0);const max=Math.max(1,...sums.map(x=>x.v));$('chart').innerHTML=sums.map(x=>`<button type="button" class="baritem ${selected===x.n?'on':''}" data-bar="${x.n}" style="--bar-color:${categoryColors[x.i%categoryColors.length]}"><span class="barval">${fmt(x.v)}</span><span class="stage"><span class="bar" style="height:${Math.max(3,x.v/max*100)}%"></span></span><span class="barlabel">${x.e} ${x.n}</span></button>`).join('')||'<p class="muted">Ainda não há despesas.</p>';document.querySelectorAll('[data-bar]').forEach(b=>b.onclick=()=>{selected=b.dataset.bar;render();});const chosen=sums.find(x=>x.n===selected);$('details').hidden=!chosen;$('details').innerHTML=chosen?`<b>${chosen.e} ${chosen.n} — ${fmt(chosen.v)}</b>`+chosen.list.map(x=>`<div class="row"><div><b>${esc(x.descricao)}</b><div class="muted">${formatLocalDate(x.data)} · ${x.conta}</div></div><b>${fmt(x.valor)}</b></div>`).join(''):'';
- $('accountchart').innerHTML=[['Débito',sd,'#0879e9'],['Crédito',sc,'#8b4de0']].map(([n,v,c])=>`<div class="acol"><b>${fmt(v)}</b><div class="bar" style="height:${Math.max(3,v/Math.max(1,sd,sc)*115)}px;background:${c}"></div>${n}</div>`).join('');
+ const accountTotal=sd+sc;
+ const debitPct=accountTotal>0?(sd/accountTotal)*100:0;
+ const creditPct=accountTotal>0?(sc/accountTotal)*100:0;
+ $('accountchart').innerHTML=`
+  <div class="account-pie-wrap">
+   <div class="account-pie" role="img" aria-label="Gráfico de pizza: débito ${debitPct.toFixed(1)} por cento e crédito ${creditPct.toFixed(1)} por cento" style="--debit-pct:${debitPct}%;--credit-pct:${creditPct}%">
+    <div class="account-pie-center"><small>Total de despesas</small><strong>${fmt(accountTotal)}</strong></div>
+   </div>
+  </div>
+  <div class="account-legend">
+   <div class="account-legend-item"><span class="account-dot debit-dot"></span><span>Débito</span><strong>${fmt(sd)}</strong><small>${debitPct.toFixed(1).replace('.',',')}%</small></div>
+   <div class="account-legend-item"><span class="account-dot credit-dot"></span><span>Crédito</span><strong>${fmt(sc)}</strong><small>${creditPct.toFixed(1).replace('.',',')}%</small></div>
+  </div>`;
+
  const monthSelect=$('monthFilter');
  const monthNames=[...new Set(state.items.map(x=>String(x.data||'').slice(0,7)).filter(x=>/^\d{4}-\d{2}$/.test(x)))].sort((a,b)=>b.localeCompare(a));
  monthSelect.innerHTML='<option value="Todos">Todos os meses</option>'+monthNames.map(m=>{const [y,mo]=m.split('-');const label=new Date(Number(y),Number(mo)-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});return `<option value="${m}">${label.charAt(0).toUpperCase()+label.slice(1)}</option>`;}).join('');
