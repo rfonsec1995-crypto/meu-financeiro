@@ -49,40 +49,7 @@ document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.da
 
 
 
-function setupLiquidSegments(){
- document.querySelectorAll('.seg,.quick,.cats').forEach(group=>{
-  if(group.dataset.liquidReady==='1')return;
-  const buttons=[...group.querySelectorAll('button')];
-  if(!buttons.length)return;
-  group.dataset.liquidReady='1';
-  const thumb=document.createElement('span');
-  thumb.className='liquid-glass-thumb';
-  thumb.setAttribute('aria-hidden','true');
-  group.prepend(thumb);
-  let activeIndex=Math.max(0,buttons.findIndex(b=>b.classList.contains('on')));
-  const place=(idx,animate=true)=>{
-   idx=Math.max(0,Math.min(buttons.length-1,idx));
-   const b=buttons[idx],gr=group.getBoundingClientRect(),r=b.getBoundingClientRect();
-   if(!animate)thumb.style.transition='none';
-   else thumb.style.removeProperty('transition');
-   thumb.style.left=(r.left-gr.left-group.clientLeft)+'px';
-   thumb.style.top=(r.top-gr.top-group.clientTop)+'px';
-   thumb.style.width=r.width+'px';
-   thumb.style.height=r.height+'px';
-   activeIndex=idx;
-  };
-  buttons.forEach((b,i)=>b.addEventListener('click',()=>{
-   activeIndex=i;
-   requestAnimationFrame(()=>place(i,true));
-   thumb.classList.remove('glass-impact');
-   void thumb.offsetWidth;
-   thumb.classList.add('glass-impact');
-  }));
-  if('ResizeObserver'in window)new ResizeObserver(()=>place(activeIndex,true)).observe(group);
-  requestAnimationFrame(()=>place(activeIndex,true));
- });
-}
-setupLiquidSegments();
+function setupLiquidSegments(){}
 
 
 
