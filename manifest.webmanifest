@@ -3,8 +3,8 @@
   "short_name": "Financeiro",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#211d46",
-  "theme_color": "#f3f2fa",
+  "background_color": "#f6f6fa",
+  "theme_color": "#f6f6fa",
   "icons": [
     {
       "src": "icon-192.png",

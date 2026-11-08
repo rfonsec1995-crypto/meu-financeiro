@@ -14,3 +14,5 @@ A hospedagem HTTPS (por exemplo, Netlify) ainda entrega os arquivos do aplicativ
 - Ao publicar esta atualização no mesmo endereço Netlify, os dados locais existentes devem permanecer, desde que os dados do Safari/site não sejam apagados. Faça um backup antes da atualização por segurança.
 
 V41: splash possui encerramento de segurança independente do app.js; ícone da tela inicial atualizado com apple-touch-icon 180x180 e cache versionado.
+
+Versão 48: interface reorganizada em dashboard, relatórios e contas; navegação inferior clássica sem Liquid Glass. Todos os dados continuam locais no dispositivo.

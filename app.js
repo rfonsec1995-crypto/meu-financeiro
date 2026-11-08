@@ -47,7 +47,7 @@ function saveState(){
 }
 function renderCats(){$('categories').dataset.liquidReady='0';$('categories').innerHTML=cats.map(([n,e])=>`<button type="button" data-cat="${n}" class="${cat===n?'on':''}">${e}<br>${n}</button>`).join('');document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{cat=b.dataset.cat;renderCats();});setupLiquidSegments();}
 function renderQuick(){$('quick').innerHTML=quick.map(n=>`<button type="button" data-q="${n}" class="${quickSelected===n?'on':''}">R$ ${n}</button>`).join('');document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{quickSelected=Number(b.dataset.q);document.querySelectorAll('[data-q]').forEach(x=>x.classList.toggle('on',x===b));$('amount').value=String(b.dataset.q);$('amount').blur();$('formmsg').textContent='Valor de '+fmt(Number(b.dataset.q))+' selecionado.';});setupLiquidSegments();}
-function render(){const {items,bal}=state;const ex=items.filter(x=>x.tipo==='Despesa');const sd=ex.filter(x=>x.conta==='Débito').reduce((s,x)=>s+x.valor,0);const sc=ex.filter(x=>x.conta==='Crédito').reduce((s,x)=>s+x.valor,0);$('debit').textContent=fmt(bal.debito);$('credit').textContent=fmt(bal.credito);$('total').textContent=fmt(bal.debito+bal.credito);$('debitBalance').value=String(bal.debito).replace('.',',');$('creditBalance').value=String(bal.credito).replace('.',',');$('spentdebit').textContent='Débito: '+fmt(sd);$('spentcredit').textContent='Crédito: '+fmt(sc);
+function render(){const {items,bal}=state;const ex=items.filter(x=>x.tipo==='Despesa');const sd=ex.filter(x=>x.conta==='Débito').reduce((s,x)=>s+x.valor,0);const sc=ex.filter(x=>x.conta==='Crédito').reduce((s,x)=>s+x.valor,0);$('debit').textContent=fmt(bal.debito);$('credit').textContent=fmt(bal.credito);$('total').textContent=fmt(bal.debito+bal.credito);if($('menuDebit'))$('menuDebit').textContent=fmt(bal.debito);if($('menuCredit'))$('menuCredit').textContent=fmt(bal.credito);if($('menuTotal'))$('menuTotal').textContent=fmt(bal.debito+bal.credito);$('debitBalance').value=String(bal.debito).replace('.',',');$('creditBalance').value=String(bal.credito).replace('.',',');$('spentdebit').textContent='Débito: '+fmt(sd);$('spentcredit').textContent='Crédito: '+fmt(sc);
  const categoryColors=['#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6','#06B6D4','#EC4899','#84CC16','#F97316','#6366F1','#14B8A6','#D946EF','#A3A3A3','#0EA5E9','#D97706'];const sums=cats.map(([n,e],i)=>{const list=ex.filter(x=>x.categoria===n);return {n,e,list,i,v:list.reduce((s,x)=>s+x.valor,0)}}).filter(x=>x.v>0);const max=Math.max(1,...sums.map(x=>x.v));$('chart').innerHTML=sums.map(x=>`<button type="button" class="baritem ${selected===x.n?'on':''}" data-bar="${x.n}" style="--bar-color:${categoryColors[x.i%categoryColors.length]}"><span class="barval">${fmt(x.v)}</span><span class="stage"><span class="bar" style="height:${Math.max(3,x.v/max*100)}%"></span></span><span class="barlabel">${x.e} ${x.n}</span></button>`).join('')||'<p class="muted">Ainda não há despesas.</p>';document.querySelectorAll('[data-bar]').forEach(b=>b.onclick=()=>{selected=b.dataset.bar;render();});const chosen=sums.find(x=>x.n===selected);$('details').hidden=!chosen;$('details').innerHTML=chosen?`<b>${chosen.e} ${chosen.n} — ${fmt(chosen.v)}</b>`+chosen.list.map(x=>`<div class="row"><div><b>${esc(x.descricao)}</b><div class="muted">${formatLocalDate(x.data)} · ${x.conta}</div></div><b>${fmt(x.valor)}</b></div>`).join(''):'';
  const accountTotal=sd+sc;
  const debitPct=accountTotal>0?(sd/accountTotal)*100:0;
@@ -67,7 +67,20 @@ function render(){const {items,bal}=state;const ex=items.filter(x=>x.tipo==='Des
  const monthNames=[...new Set(state.items.map(x=>String(x.data||'').slice(0,7)).filter(x=>/^\d{4}-\d{2}$/.test(x)))].sort((a,b)=>b.localeCompare(a));
  monthSelect.innerHTML='<option value="Todos">Todos os meses</option>'+monthNames.map(m=>{const [y,mo]=m.split('-');const label=new Date(Number(y),Number(mo)-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});return `<option value="${m}">${label.charAt(0).toUpperCase()+label.slice(1)}</option>`;}).join('');
  monthSelect.value=monthNames.includes(monthFilter)?monthFilter:'Todos';
- const daySelect=$('dayFilter');const visibleDates=[...new Set(items.filter(x=>(filter==='Todos'||x.conta===filter)&&(monthFilter==='Todos'||String(x.data||'').slice(0,7)===monthFilter)).map(x=>String(x.data||'')).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)))].sort((a,b)=>b.localeCompare(a));daySelect.innerHTML='<option value="Todos">Todos os dias</option>'+visibleDates.map(d=>`<option value="${d}">${formatLocalDate(d)}</option>`).join('');if(!visibleDates.includes(dayFilter))dayFilter='Todos';daySelect.value=dayFilter;const filteredHistory=items.filter(x=>(filter==='Todos'||x.conta===filter)&&(monthFilter==='Todos'||String(x.data||'').slice(0,7)===monthFilter)&&(dayFilter==='Todos'||String(x.data||'')===dayFilter));const groupedDates=[...new Set(filteredHistory.map(x=>String(x.data||'')))].sort((a,b)=>b.localeCompare(a));$('history').innerHTML=groupedDates.map(d=>`<div class="history-day"><h3>${formatLocalDate(d)}</h3>${filteredHistory.filter(x=>String(x.data||'')===d).map(x=>`<div class="row history-row"><div class="history-info"><b>${esc(x.descricao)}</b><div class="muted">${esc(x.categoria)} · ${x.conta} · <span class="history-time">${x.hora?esc(x.hora):"Hora não registrada"}</span></div></div><div class="history-actions"><b class="${x.tipo==='Entrada'?'income':'expense'}">${x.tipo==='Entrada'?'+':'−'}${fmt(x.valor)}</b><button type="button" class="delete-btn" data-delete="${esc(x.id)}" aria-label="Excluir ${esc(x.descricao)}" title="Excluir lançamento">Excluir</button></div></div>`).join('')}</div>`).join('')||'<p class="muted">Nenhum lançamento.</p>';document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>{const item=state.items.find(x=>x.id===b.dataset.delete);if(!item)return;if(!window.confirm(`Excluir o lançamento "${item.descricao}" de ${fmt(item.valor)}?`))return;const key=item.conta==='Débito'?'debito':'credito';state.bal[key]+=item.tipo==='Despesa'?item.valor:-item.valor;state.items=state.items.filter(x=>x.id!==item.id);saveState();render();});}
+ const daySelect=$('dayFilter');const visibleDates=[...new Set(items.filter(x=>(filter==='Todos'||x.conta===filter)&&(monthFilter==='Todos'||String(x.data||'').slice(0,7)===monthFilter)).map(x=>String(x.data||'')).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)))].sort((a,b)=>b.localeCompare(a));daySelect.innerHTML='<option value="Todos">Todos os dias</option>'+visibleDates.map(d=>`<option value="${d}">${formatLocalDate(d)}</option>`).join('');if(!visibleDates.includes(dayFilter))dayFilter='Todos';daySelect.value=dayFilter;const filteredHistory=items.filter(x=>(filter==='Todos'||x.conta===filter)&&(monthFilter==='Todos'||String(x.data||'').slice(0,7)===monthFilter)&&(dayFilter==='Todos'||String(x.data||'')===dayFilter));const groupedDates=[...new Set(filteredHistory.map(x=>String(x.data||'')))].sort((a,b)=>b.localeCompare(a));$('history').innerHTML=groupedDates.map(d=>`<div class="history-day"><h3>${formatLocalDate(d)}</h3>${filteredHistory.filter(x=>String(x.data||'')===d).map(x=>`<div class="row history-row"><div class="history-info"><b>${esc(x.descricao)}</b><div class="muted">${esc(x.categoria)} · ${x.conta} · <span class="history-time">${x.hora?esc(x.hora):"Hora não registrada"}</span></div></div><div class="history-actions"><b class="${x.tipo==='Entrada'?'income':'expense'}">${x.tipo==='Entrada'?'+':'−'}${fmt(x.valor)}</b><button type="button" class="delete-btn" data-delete="${esc(x.id)}" aria-label="Excluir ${esc(x.descricao)}" title="Excluir lançamento">Excluir</button></div></div>`).join('')}</div>`).join('')||'<p class="muted">Nenhum lançamento.</p>';document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>{const item=state.items.find(x=>x.id===b.dataset.delete);if(!item)return;if(!window.confirm(`Excluir o lançamento "${item.descricao}" de ${fmt(item.valor)}?`))return;const key=item.conta==='Débito'?'debito':'credito';state.bal[key]+=item.tipo==='Despesa'?item.valor:-item.valor;state.items=state.items.filter(x=>x.id!==item.id);saveState();render();});
+ const trend=$('trendChart');
+ if(trend){
+  const now=new Date(),months=[];
+  for(let k=5;k>=0;k--){const d=new Date(now.getFullYear(),now.getMonth()-k,1);const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');months.push({key,label:d.toLocaleDateString('pt-BR',{month:'short'}).replace('.',''),value:0});}
+  months.forEach(m=>{m.value=ex.filter(x=>String(x.data||'').slice(0,7)===m.key).reduce((s,x)=>s+x.valor,0);});
+  const total=months.reduce((s,m)=>s+m.value,0),max=Math.max(1,...months.map(m=>m.value));
+  $('trendTotal').textContent=fmt(total);
+  const pts=months.map((m,i)=>({x:28+i*66,y:116-(m.value/max)*78,m}));
+  const path=pts.map((p,i)=>(i?'L':'M')+p.x+' '+p.y).join(' ');
+  const area=path+' L '+pts[pts.length-1].x+' 126 L '+pts[0].x+' 126 Z';
+  trend.innerHTML='<svg viewBox="0 0 388 158" role="img" aria-label="Despesas mensais nos últimos seis meses"><defs><linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#766be0" stop-opacity=".28"/><stop offset="1" stop-color="#766be0" stop-opacity="0"/></linearGradient></defs>'+[35,75,115].map(y=>'<line x1="18" y1="'+y+'" x2="370" y2="'+y+'" stroke="#eceaf5" stroke-dasharray="3 5"/>').join('')+'<path d="'+area+'" fill="url(#trendFill)"/><path d="'+path+'" fill="none" stroke="#655bd2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+pts.map(p=>'<circle cx="'+p.x+'" cy="'+p.y+'" r="4" fill="#fff" stroke="#655bd2" stroke-width="2.5"/>').join('')+pts.map(p=>'<text x="'+p.x+'" y="148" text-anchor="middle" font-size="10" fill="#9290aa">'+p.m.label+'</text>').join('')+'</svg>';
+ }
+}
 document.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{type=b.dataset.type;document.querySelectorAll('[data-type]').forEach(x=>x.classList.toggle('on',x===b));});
 document.querySelectorAll('[data-account]').forEach(b=>b.onclick=()=>{account=b.dataset.account;document.querySelectorAll('[data-account]').forEach(x=>x.classList.toggle('on',x===b));});
 document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('on',x===b));render();});
@@ -109,7 +122,7 @@ if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serv
 (()=>{
  const media=window.matchMedia('(prefers-color-scheme: dark)');
  const meta=document.querySelector('#themeColorMeta');
- const apply=()=>{if(meta)meta.setAttribute('content',media.matches?'#101214':'#f2f4f7');};
+ const apply=()=>{if(meta)meta.setAttribute('content',media.matches?'#171727':'#f6f6fa');};
  apply();
  if(media.addEventListener)media.addEventListener('change',apply);
  else if(media.addListener)media.addListener(apply);
@@ -272,129 +285,30 @@ $('voiceText').addEventListener('input',()=>{
 });
 
 
-/* Navegação inferior, gesto horizontal e indicador Liquid Glass */
+/* Navegação por abas e gesto horizontal — barra fixa clássica */
 (function(){
  const nav=document.querySelector('.bottom-nav');
  const tabs=[...document.querySelectorAll('[data-tab]')];
  const pages=[...document.querySelectorAll('[data-page]')];
  if(!nav||!tabs.length||!pages.length)return;
-
  const order=tabs.map(t=>t.dataset.tab);
- let current='home';
- let drag=null;
- let suppressClickUntil=0;
- let thumb=nav.querySelector('.liquid-selection');
- if(!thumb){thumb=document.createElement('span');thumb.className='liquid-selection';thumb.setAttribute('aria-hidden','true');nav.prepend(thumb);}
-
- function moveThumb(name,animate=true,stretch=1){
-  const tab=tabs.find(t=>t.dataset.tab===name);
-  if(!tab)return;
-  const navRect=nav.getBoundingClientRect(),r=tab.getBoundingClientRect();
-  const x=r.left-navRect.left+nav.scrollLeft;
-  thumb.style.setProperty('--thumb-x',x+'px');
-  thumb.style.setProperty('--thumb-w',r.width+'px');
-  thumb.style.setProperty('--thumb-scale',stretch);
-  thumb.classList.toggle('no-transition',!animate);
- }
- function showPage(name,fromGesture=false){
+ let current='home',swipe=null;
+ function showPage(name,fromSwipe=false){
   if(!order.includes(name))return;
   current=name;
-  pages.forEach(page=>{
-   const active=page.dataset.page===name;
-   page.classList.toggle('is-active',active);
-   page.setAttribute('aria-hidden',active?'false':'true');
-  });
-  tabs.forEach(tab=>{
-   const active=tab.dataset.tab===name;
-   tab.classList.toggle('active',active);
-   if(active)tab.setAttribute('aria-current','page');
-   else tab.removeAttribute('aria-current');
-  });
-  moveThumb(name,true);
-  if(!fromGesture)window.scrollTo({top:0,behavior:'smooth'});
+  pages.forEach(p=>{const active=p.dataset.page===name;p.classList.toggle('is-active',active);p.setAttribute('aria-hidden',active?'false':'true');});
+  tabs.forEach(t=>{const active=t.dataset.tab===name;t.classList.toggle('active',active);if(active)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current');});
+  if(!fromSwipe)window.scrollTo({top:0,behavior:'smooth'});
  }
- tabs.forEach(tab=>tab.addEventListener('click',()=>{
-  if(Date.now()<suppressClickUntil)return;
-  showPage(tab.dataset.tab);
- }));
- document.querySelectorAll('[data-go]').forEach(button=>button.addEventListener('click',()=>showPage(button.dataset.go)));
-
- function closestTab(clientX){
-  let best=tabs[0],distance=Infinity;
-  tabs.forEach(tab=>{const r=tab.getBoundingClientRect(),d=Math.abs(clientX-(r.left+r.width/2));if(d<distance){distance=d;best=tab;}});
-  return best;
- }
- function selectAt(clientX){
-  const tab=closestTab(clientX);
-  tabs.forEach(t=>t.classList.toggle('active',t===tab));
-  moveThumb(tab.dataset.tab,false,1.12);
-  return tab.dataset.tab;
- }
- nav.addEventListener('pointerdown',e=>{
-  if(e.pointerType==='mouse'&&e.button!==0)return;
-  drag={id:e.pointerId,startX:e.clientX,startY:e.clientY,lastX:e.clientX,moved:false,name:current};
-  try{nav.setPointerCapture(e.pointerId);}catch(_){}
-  selectAt(e.clientX);
- });
- nav.addEventListener('pointermove',e=>{
-  if(!drag||drag.id!==e.pointerId)return;
-  const dx=e.clientX-drag.startX,dy=e.clientY-drag.startY;
-  if(Math.abs(dx)>5&&Math.abs(dx)>Math.abs(dy)){drag.moved=true;e.preventDefault();}
-  if(drag.moved){
-   drag.name=selectAt(e.clientX);
-   const speed=Math.min(1,Math.abs(e.clientX-drag.lastX)/24);
-   thumb.style.setProperty('--thumb-scale',String(1+speed*.16));
-   drag.lastX=e.clientX;
-  }
- });
- function finishNavGesture(e){
-  if(!drag||drag.id!==e.pointerId)return;
-  const wasMoved=drag.moved;
-  const name=wasMoved?selectAt(e.clientX):drag.name;
-  drag=null;
-  if(wasMoved){suppressClickUntil=Date.now()+420;showPage(name,true);}
-  else showPage(name);
-  thumb.style.setProperty('--thumb-scale','1');
- }
- nav.addEventListener('pointerup',finishNavGesture);
- nav.addEventListener('pointercancel',finishNavGesture);
- nav.addEventListener('lostpointercapture',e=>{if(drag&&drag.id===e.pointerId){drag=null;moveThumb(current,true);}});
-
- // Swipe between sections. Ignore controls and horizontal/vertical scrollers so forms and charts remain usable.
- let swipe=null;
- const interactive='button,input,select,textarea,a,[contenteditable="true"],.chart,.accountchart,.bottom-nav';
+ tabs.forEach(t=>t.addEventListener('click',()=>showPage(t.dataset.tab)));
+ document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.go)));
+ const interactive='button,input,select,textarea,a,[contenteditable="true"],.chart,.accountchart,.trend-chart,.bottom-nav';
  pages.forEach(page=>{
-  page.addEventListener('touchstart',e=>{
-   if(e.touches.length!==1||e.target.closest(interactive))return;
-   const t=e.touches[0];swipe={x:t.clientX,y:t.clientY};
-  },{passive:true});
-  page.addEventListener('touchend',e=>{
-   if(!swipe||!e.changedTouches.length){swipe=null;return;}
-   const t=e.changedTouches[0],dx=t.clientX-swipe.x,dy=t.clientY-swipe.y;swipe=null;
-   if(Math.abs(dx)>65&&Math.abs(dx)>Math.abs(dy)*1.35){
-    const idx=order.indexOf(current),next=order[Math.max(0,Math.min(order.length-1,idx+(dx<0?1:-1)))];
-    if(next!==current)showPage(next,true);
-   }
-  },{passive:true});
+  page.addEventListener('touchstart',e=>{if(e.touches.length!==1||e.target.closest(interactive))return;const t=e.touches[0];swipe={x:t.clientX,y:t.clientY};},{passive:true});
+  page.addEventListener('touchend',e=>{if(!swipe||!e.changedTouches.length){swipe=null;return;}const t=e.changedTouches[0],dx=t.clientX-swipe.x,dy=t.clientY-swipe.y;swipe=null;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.4){const i=order.indexOf(current),n=order[Math.max(0,Math.min(order.length-1,i+(dx<0?1:-1)))];if(n!==current)showPage(n,true);}},{passive:true});
   page.addEventListener('touchcancel',()=>{swipe=null;},{passive:true});
  });
  showPage('home');
- window.addEventListener('resize',()=>moveThumb(current,false));
- if(window.matchMedia){
-  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
-  if(reduced.matches)nav.classList.add('reduce-motion');
- }
-
- const meta=document.getElementById('themeColorMeta');
- const media=window.matchMedia('(prefers-color-scheme: dark)');
- function syncSystemTheme(){
-  document.documentElement.dataset.theme=media.matches?'dark':'light';
-  if(meta)meta.setAttribute('content',media.matches?'#171629':'#f3f2fa');
-  document.documentElement.style.colorScheme=media.matches?'dark':'light';
- }
- syncSystemTheme();
- if(media.addEventListener)media.addEventListener('change',syncSystemTheme);
- else if(media.addListener)media.addListener(syncSystemTheme);
 })();
 /* Foto de perfil local para a saudação da página inicial */
 (function(){
