@@ -335,3 +335,31 @@ body{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
 @media(prefers-reduced-motion:reduce){
  .tab-page.is-active{animation:none}
 }
+
+
+/* V37 — perfil pessoal e identidade renovada */
+.app-header{gap:13px;align-items:center}
+.profile-photo-button{
+ position:relative;flex:0 0 66px;width:66px;height:66px;padding:0;margin:0;
+ display:grid;place-items:center;overflow:hidden;border-radius:50%;
+ background:linear-gradient(145deg,#eaf1ff,#dce9ff);color:#2764e8;
+ border:2px solid #fff;box-shadow:0 5px 18px rgba(31,78,150,.18),0 0 0 1px #d9e4f3;
+}
+.profile-photo-button:after{
+ content:"＋";position:absolute;right:0;bottom:0;width:23px;height:23px;
+ display:grid;place-items:center;border:2px solid #fff;border-radius:50%;
+ background:#2764e8;color:#fff;font-size:16px;font-weight:500;line-height:1;
+}
+.profile-photo-button img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.profile-photo-placeholder{font-size:30px;font-weight:300;line-height:1}
+.profile-photo-placeholder[hidden]{display:none}
+.welcome-line{margin:2px 0 3px;font-size:10px;letter-spacing:1.05px;font-weight:750;color:#71839a}
+.welcome-line strong{color:#2764e8;font-weight:900}
+.header-copy h1{margin:0;font-size:22px}
+.header-copy .brand-kicker{font-size:8px}
+@media(prefers-color-scheme:dark){
+ .profile-photo-button{background:linear-gradient(145deg,#263c61,#1b2b45);border-color:#233752;box-shadow:0 5px 18px rgba(0,0,0,.35),0 0 0 1px #3c5270}
+ .profile-photo-button:after{border-color:#172334;background:#4c82ed}
+ .welcome-line{color:#9eacc0}
+ .welcome-line strong{color:#9dbaff}
+}

@@ -280,3 +280,41 @@ $('voiceText').addEventListener('input',()=>{
  if(media.addEventListener)media.addEventListener('change',syncSystemTheme);
  else if(media.addListener)media.addListener(syncSystemTheme);
 })();
+
+
+/* Foto de perfil local para a saudação da página inicial */
+(function(){
+ const input=document.getElementById('profilePhotoInput');
+ const button=document.getElementById('profilePhotoButton');
+ const photo=document.getElementById('profilePhoto');
+ const placeholder=document.getElementById('profilePhotoPlaceholder');
+ const KEY='meu-financeiro-profile-photo-v1';
+ function applyPhoto(src){
+  if(src){photo.src=src;photo.hidden=false;placeholder.hidden=true;button.classList.add('has-photo');}
+  else{photo.removeAttribute('src');photo.hidden=true;placeholder.hidden=false;button.classList.remove('has-photo');}
+ }
+ try{const saved=localStorage.getItem(KEY);if(saved)applyPhoto(saved);}catch(e){}
+ button.addEventListener('click',()=>input.click());
+ input.addEventListener('change',()=>{
+  const file=input.files&&input.files[0];if(!file)return;
+  if(!file.type.startsWith('image/'))return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+   const img=new Image();
+   img.onload=()=>{
+    const canvas=document.createElement('canvas');
+    const side=480;canvas.width=side;canvas.height=side;
+    const ctx=canvas.getContext('2d');
+    const scale=Math.max(side/img.width,side/img.height);
+    const w=img.width*scale,h=img.height*scale;
+    ctx.drawImage(img,(side-w)/2,(side-h)/2,w,h);
+    const data=canvas.toDataURL('image/jpeg',.82);
+    try{localStorage.setItem(KEY,data);applyPhoto(data);}
+    catch(e){alert('Não foi possível salvar essa foto. Escolha uma imagem menor.');}
+   };
+   img.src=reader.result;
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+ });
+})();
