@@ -15,4 +15,8 @@ A hospedagem HTTPS (por exemplo, Netlify) ainda entrega os arquivos do aplicativ
 
 V41: splash possui encerramento de segurança independente do app.js; ícone da tela inicial atualizado com apple-touch-icon 180x180 e cache versionado.
 
-Versão 48: interface reorganizada em dashboard, relatórios e contas; navegação inferior clássica sem Liquid Glass. Todos os dados continuam locais no dispositivo.
+Versão 50: interface reorganizada em dashboard, relatórios e contas; navegação inferior clássica sem Liquid Glass. Todos os dados continuam locais no dispositivo.
+
+Versão 50: corrigido fundo da inicialização até a área de status do iPhone, cores dinâmicas das barras por categoria, ícone da aba Início e tamanho do botão de foto de perfil. Dados locais preservados.
+
+Versão 50: ícone Apple Home Screen sincronizado com o ícone do app e cache-busted; fundo roxo da tela de análises fixado em uma camada independente para não variar ao selecionar categorias. Dados locais preservados.

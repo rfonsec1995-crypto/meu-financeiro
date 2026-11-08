@@ -1,4 +1,4 @@
-const CACHE='meu-financeiro-local-v48-dashboard-reports-accounts';
+const CACHE='meu-financeiro-local-v50-stable-chart-background-app-icon';
 const FILES=[
  './','./index.html','./styles.css','./app.js','./manifest.webmanifest',
  './icon-180.png','./icon-192.png','./icon-512.png'

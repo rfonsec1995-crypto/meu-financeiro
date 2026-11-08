@@ -1129,3 +1129,124 @@ footer{font-size:9px;color:#aaa9b9}
  .center-add{border-color:#171727!important}
 }
 @media(prefers-reduced-motion:reduce){.center-add,button{transition:none!important}}
+
+
+/* V49 — correções pontuais: splash edge-to-edge, cores do gráfico e cabeçalho */
+html{background:#211d46}
+body{background:#f8f8fb}
+.splash{
+ position:fixed!important;
+ top:calc(-1 * env(safe-area-inset-top, 0px))!important;
+ left:0!important;right:0!important;bottom:0!important;
+ min-height:calc(100% + env(safe-area-inset-top, 0px))!important;
+ height:calc(100% + env(safe-area-inset-top, 0px))!important;
+ padding-top:calc(24px + env(safe-area-inset-top, 0px))!important;
+ background:
+  radial-gradient(ellipse at 50% 40%,rgba(139,127,235,.42),transparent 38%),
+  radial-gradient(ellipse at 15% 85%,rgba(79,70,174,.38),transparent 38%),
+  linear-gradient(145deg,#17152d 0%,#302b5e 52%,#211d46 100%)!important;
+}
+.profile-photo-button{
+ width:66px!important;height:66px!important;flex:0 0 66px!important;
+ border-radius:50%!important;overflow:hidden!important;
+ background:linear-gradient(145deg,#eeedff,#dcd9ff)!important;
+ border:2px solid #fff!important;
+ box-shadow:0 5px 18px rgba(68,59,155,.15),0 0 0 1px #e8e6f6!important;
+}
+.profile-photo-button img{width:100%!important;height:100%!important;object-fit:cover!important;border-radius:50%!important}
+.profile-photo-placeholder{font-size:30px!important;color:#5c53c8!important}
+.profile-photo-button:after{
+ content:"＋";position:absolute;right:0;bottom:0;width:22px;height:22px;
+ display:grid;place-items:center;border:2px solid #fff;border-radius:50%;
+ background:#5149c7;color:#fff;font-size:15px;font-weight:500;line-height:1;
+}
+.bottom-nav .nav-item:first-child svg{
+ stroke:currentColor!important;fill:none!important;stroke-width:1.8!important;
+}
+.bottom-nav .nav-item:first-child svg rect{
+ fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;
+}
+.tab-page[data-page="analytics"]>section:nth-child(2) .bar{
+ background:var(--bar-color,#7e91aa)!important;
+ box-shadow:0 6px 12px color-mix(in srgb,var(--bar-color,#7e91aa) 22%,transparent)!important;
+ filter:none!important;
+}
+.tab-page[data-page="analytics"]>section:nth-child(2) .baritem.on{
+ border-color:var(--bar-color,#2764e8)!important;
+ background:color-mix(in srgb,var(--bar-color,#2764e8) 8%,white)!important;
+}
+.tab-page[data-page="analytics"]>section:nth-child(2) .baritem.on .bar{
+ filter:brightness(1.05)!important;
+}
+.tab-page[data-page="analytics"]>section:nth-child(2) .barval,
+.tab-page[data-page="analytics"]>section:nth-child(2) .barlabel{color:#4a596c!important}
+@media(prefers-color-scheme:dark){
+ html{background:#211d46}
+ body{background:#171727}
+ .tab-page[data-page="analytics"]>section:nth-child(2) .baritem.on{
+  background:color-mix(in srgb,var(--bar-color,#2764e8) 16%,#24233a)!important;
+ }
+ .tab-page[data-page="analytics"]>section:nth-child(2) .barval,
+ .tab-page[data-page="analytics"]>section:nth-child(2) .barlabel{color:#d8d6e8!important}
+}
+
+
+/* V50 — fundo roxo estável na tela de análises; não depende da altura do gráfico */
+.tab-page[data-page="analytics"]{
+ position:relative!important;
+ isolation:isolate;
+ background:#f4f3fa!important;
+}
+.tab-page[data-page="analytics"]::before{
+ content:"";
+ position:absolute;
+ z-index:-1;
+ top:0;left:-14px;right:-14px;
+ height:790px;
+ pointer-events:none;
+ background:linear-gradient(180deg,#5148c3 0%,#5f56ce 74%,#645bd0 100%);
+}
+.tab-page[data-page="analytics"]>section:first-child{
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+.tab-page[data-page="analytics"]>section:first-child .accountchart{
+ background:#fafaff!important;
+ border:1px solid #eceaf4!important;
+ box-shadow:none!important;
+}
+.tab-page[data-page="analytics"]>section:first-child .account-pie-wrap{
+ background:transparent!important;
+}
+.tab-page[data-page="analytics"]>section:first-child .details{
+ background:#fff!important;
+ color:#35354d!important;
+}
+.tab-page[data-page="analytics"]>section:nth-child(2){
+ background:#fff!important;
+ border:1px solid #ededf3!important;
+ box-shadow:0 7px 22px rgba(37,37,75,.045)!important;
+}
+.tab-page[data-page="analytics"]>section:nth-child(2) .chart{
+ background:#fafaff!important;
+ border:1px solid #eceaf4!important;
+}
+.tab-page[data-page="analytics"]>section:nth-child(2) .stage{
+ background:transparent!important;
+}
+.tab-page[data-page="analytics"]>section:nth-child(2) .bar{
+ background:var(--bar-color,#7e91aa)!important;
+}
+@media(prefers-color-scheme:dark){
+ .tab-page[data-page="analytics"]{background:#19192b!important}
+ .tab-page[data-page="analytics"]::before{
+  background:linear-gradient(180deg,#5148c3 0%,#5f56ce 74%,#645bd0 100%);
+ }
+ .tab-page[data-page="analytics"]>section:nth-child(2){
+  background:#24233a!important;border-color:#383650!important;
+ }
+ .tab-page[data-page="analytics"]>section:nth-child(2) .chart{
+  background:#2c2a45!important;border-color:#403b60!important;
+ }
+}
