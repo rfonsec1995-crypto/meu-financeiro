@@ -476,3 +476,159 @@ body{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
  .account-legend-item small{color:#9aa8ba}
 }
 @media(prefers-reduced-motion:reduce){.account-pie{animation:none}}
+
+
+/* V44 — barra flutuante inspirada no Liquid Glass do iOS */
+.bottom-nav{
+ left:50%!important;
+ bottom:calc(12px + env(safe-area-inset-bottom))!important;
+ width:min(690px,calc(100% - 28px))!important;
+ min-height:88px;
+ padding:8px!important;
+ gap:4px!important;
+ grid-template-columns:repeat(5,minmax(0,1fr));
+ border-radius:999px!important;
+ overflow:hidden;
+ isolation:isolate;
+ background:
+  linear-gradient(145deg,rgba(255,255,255,.42) 0%,rgba(238,243,255,.17) 28%,rgba(178,197,232,.20) 66%,rgba(255,255,255,.28) 100%),
+  rgba(115,133,169,.40)!important;
+ border:1.5px solid rgba(255,255,255,.62)!important;
+ box-shadow:
+  0 18px 46px rgba(20,31,62,.24),
+  0 3px 10px rgba(20,31,62,.12),
+  inset 0 2px 2px rgba(255,255,255,.78),
+  inset 0 -2px 3px rgba(255,255,255,.20)!important;
+ backdrop-filter:blur(42px) saturate(2.1) brightness(1.08)!important;
+ -webkit-backdrop-filter:blur(42px) saturate(2.1) brightness(1.08)!important;
+}
+.bottom-nav:before{
+ content:"";position:absolute;inset:1px;border-radius:inherit;z-index:0;pointer-events:none;
+ background:
+  radial-gradient(ellipse at 18% -10%,rgba(255,255,255,.70),transparent 46%),
+  radial-gradient(ellipse at 85% 110%,rgba(200,220,255,.30),transparent 42%),
+  linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.015) 55%,rgba(24,44,88,.08));
+}
+.bottom-nav:after{
+ content:"";position:absolute;top:1px;left:7%;right:7%;height:1px;z-index:4;
+ background:linear-gradient(90deg,transparent,rgba(255,255,255,.96),transparent);
+ pointer-events:none;
+}
+.nav-item{
+ z-index:2;
+ min-height:68px!important;
+ border-radius:999px!important;
+ padding:8px 3px 7px!important;
+ gap:5px!important;
+ color:rgba(255,255,255,.96)!important;
+ font-size:clamp(10px,2.8vw,14px)!important;
+ font-weight:650!important;
+ letter-spacing:.05px;
+ background:transparent!important;
+ border:1px solid transparent!important;
+ box-shadow:none!important;
+}
+.nav-item svg{
+ width:29px!important;height:29px!important;
+ stroke-width:2!important;
+ filter:drop-shadow(0 1px 1px rgba(20,32,60,.10));
+}
+.nav-item:first-child svg{stroke:none}
+.nav-item.active{
+ background:
+  linear-gradient(155deg,rgba(255,255,255,.25),rgba(255,255,255,.075) 60%,rgba(40,55,125,.13))!important;
+ color:#fff!important;
+ border:1px solid rgba(255,255,255,.40)!important;
+ box-shadow:
+  0 4px 14px rgba(23,34,76,.16),
+  inset 0 1.5px 1px rgba(255,255,255,.56),
+  inset 0 -1px 1px rgba(255,255,255,.10)!important;
+}
+.nav-item.active:before{
+ content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;
+ background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.25),transparent 72%);
+ pointer-events:none;
+}
+.nav-item:active{transform:scale(.96)}
+/* Light appearance: cool translucent glass, with a readable active capsule */
+@media(prefers-color-scheme:light){
+ .bottom-nav{
+  background:
+   linear-gradient(145deg,rgba(255,255,255,.64),rgba(222,231,249,.32) 42%,rgba(172,190,224,.34)),
+   rgba(122,139,174,.35)!important;
+  border-color:rgba(255,255,255,.78)!important;
+ }
+ .nav-item{color:#fff!important;text-shadow:0 1px 3px rgba(30,43,77,.24)}
+ .nav-item.active{
+  background:linear-gradient(155deg,rgba(59,54,145,.78),rgba(61,59,150,.62))!important;
+  border-color:rgba(255,255,255,.24)!important;
+  box-shadow:0 4px 14px rgba(35,34,103,.20),inset 0 1px 1px rgba(255,255,255,.28)!important;
+ }
+}
+/* Dark appearance: deeper smoke glass, not a flat opaque panel */
+@media(prefers-color-scheme:dark){
+ .bottom-nav{
+  background:
+   linear-gradient(145deg,rgba(255,255,255,.22),rgba(120,143,185,.10) 42%,rgba(35,52,82,.30)),
+   rgba(35,48,73,.58)!important;
+  border-color:rgba(235,243,255,.42)!important;
+  box-shadow:0 18px 46px rgba(0,0,0,.48),0 3px 10px rgba(0,0,0,.28),inset 0 2px 2px rgba(255,255,255,.34),inset 0 -2px 3px rgba(255,255,255,.09)!important;
+ }
+ .nav-item{color:rgba(255,255,255,.94)!important}
+ .nav-item.active{
+  background:linear-gradient(155deg,rgba(255,255,255,.25),rgba(255,255,255,.07))!important;
+  border-color:rgba(255,255,255,.34)!important;
+ }
+}
+@media(max-width:380px){
+ .bottom-nav{min-height:78px;padding:6px!important;width:calc(100% - 20px)!important}
+ .nav-item{min-height:62px!important;font-size:9px!important;gap:3px!important}
+ .nav-item svg{width:25px!important;height:25px!important}
+}
+@media(prefers-reduced-motion:reduce){.nav-item{transition:none!important}}
+
+
+/* V45 — indicador líquido e gestos suaves nos menus */
+.bottom-nav{position:fixed;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.bottom-nav .liquid-selection{
+ position:absolute;z-index:1;left:0;top:8px;bottom:8px;
+ width:var(--thumb-w,20%);border-radius:999px;
+ transform:translate3d(var(--thumb-x,0px),0,0) scaleX(var(--thumb-scale,1));
+ transform-origin:center;
+ pointer-events:none;
+ background:
+  radial-gradient(ellipse at 28% 0%,rgba(255,255,255,.74),transparent 58%),
+  linear-gradient(155deg,rgba(255,255,255,.42),rgba(255,255,255,.12) 48%,rgba(115,151,220,.20));
+ border:1px solid rgba(255,255,255,.52);
+ box-shadow:
+  0 4px 16px rgba(29,48,89,.13),
+  inset 0 1.5px 1px rgba(255,255,255,.76),
+  inset 0 -1px 1px rgba(255,255,255,.18);
+ backdrop-filter:blur(18px) saturate(1.9);
+ -webkit-backdrop-filter:blur(18px) saturate(1.9);
+ transition:
+  transform .48s cubic-bezier(.22,1,.36,1),
+  width .42s cubic-bezier(.22,1,.36,1),
+  filter .25s ease;
+ will-change:transform,width;
+}
+.bottom-nav .liquid-selection.no-transition{transition:none!important}
+.bottom-nav .nav-item{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+.bottom-nav .nav-item.active{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+.bottom-nav .nav-item{z-index:2}
+.bottom-nav .nav-item.active{color:#fff!important}
+.bottom-nav .nav-item:before{display:none!important}
+.bottom-nav .nav-item svg,.bottom-nav .nav-item span{pointer-events:none}
+.bottom-nav .liquid-selection{z-index:1}
+@media(prefers-color-scheme:dark){
+ .bottom-nav .liquid-selection{
+  background:
+   radial-gradient(ellipse at 28% 0%,rgba(255,255,255,.34),transparent 58%),
+   linear-gradient(155deg,rgba(255,255,255,.24),rgba(255,255,255,.07) 48%,rgba(120,158,230,.17));
+  border-color:rgba(255,255,255,.32);
+  box-shadow:0 4px 16px rgba(0,0,0,.25),inset 0 1.5px 1px rgba(255,255,255,.34),inset 0 -1px 1px rgba(255,255,255,.08);
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .bottom-nav .liquid-selection{transition:none!important}
+}
