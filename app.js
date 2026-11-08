@@ -349,7 +349,8 @@ $('voiceText').addEventListener('input',()=>{
  });
  function finishNavGesture(e){
   if(!drag||drag.id!==e.pointerId)return;
-  const wasMoved=drag.moved,name=drag.name;
+  const wasMoved=drag.moved;
+  const name=wasMoved?selectAt(e.clientX):drag.name;
   drag=null;
   if(wasMoved){suppressClickUntil=Date.now()+420;showPage(name,true);}
   else showPage(name);

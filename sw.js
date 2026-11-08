@@ -1,4 +1,4 @@
-const CACHE='meu-financeiro-local-v45-swipe-liquid-indicator';
+const CACHE='meu-financeiro-local-v46-visual-experience';
 const FILES=[
  './','./index.html','./styles.css','./app.js','./manifest.webmanifest',
  './icon-180.png','./icon-192.png','./icon-512.png'
